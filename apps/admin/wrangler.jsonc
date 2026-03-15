@@ -1,0 +1,36 @@
+{
+  "name": "radioboss-admin",
+  "main": "./worker/index.ts",
+  "compatibility_date": "2026-03-15",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "binding": "ASSETS",
+    "not_found_handling": "none"
+  },
+  "images": {
+    "binding": "IMAGES"
+  },
+  "vars": {
+    "APP_ENV": "development",
+    "ACCESS_AUDIENCE": "radioboss-internal",
+    "BILLING_PROVIDER": "stripe"
+  },
+  "services": [
+    {
+      "binding": "CONTROL_API",
+      "service": "radioboss-control-api"
+    }
+  ],
+  "env": {
+    "staging": {
+      "vars": {
+        "APP_ENV": "staging"
+      }
+    },
+    "production": {
+      "vars": {
+        "APP_ENV": "production"
+      }
+    }
+  }
+}

@@ -1,0 +1,86 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "radioboss-control-api",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-03-15",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": {
+    "enabled": true
+  },
+  "vars": {
+    "APP_ENV": "development",
+    "STATION_DB_MODE": "shared-scaffold",
+    "WIDGET_TOKEN_SECRET": "dev-widget-secret-change-in-production"
+  },
+  "durable_objects": {
+    "bindings": []
+  },
+  "d1_databases": [
+    {
+      "binding": "GLOBAL_DB",
+      "database_name": "radioboss-global-dev",
+      "database_id": "global-dev",
+      "migrations_dir": "migrations/global"
+    },
+    {
+      "binding": "STATION_DB",
+      "database_name": "radioboss-station-dev",
+      "database_id": "station-dev",
+      "migrations_dir": "migrations/station"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "MEDIA_BUCKET",
+      "bucket_name": "radioboss-media-dev"
+    }
+  ],
+  "services": [
+    {
+      "binding": "STATION_GATEWAY",
+      "service": "radioboss-station-gateway"
+    }
+  ],
+  "analytics_engine_datasets": [
+    {
+      "binding": "OBSERVABILITY",
+      "dataset": "radioboss_station_events"
+    }
+  ],
+  "queues": {
+    "producers": [
+      {
+        "binding": "STATION_EVENTS",
+        "queue": "radioboss-station-events"
+      }
+    ],
+    "consumers": [
+      {
+        "queue": "radioboss-station-events",
+        "max_batch_size": 10,
+        "max_batch_timeout": 5,
+        "max_retries": 5,
+        "dead_letter_queue": "radioboss-station-events-dlq"
+      }
+    ]
+  },
+  "workflows": [
+    {
+      "name": "station-provisioner",
+      "binding": "STATION_PROVISIONER",
+      "class_name": "StationProvisionWorkflow"
+    }
+  ],
+  "env": {
+    "staging": {
+      "vars": {
+        "APP_ENV": "staging"
+      }
+    },
+    "production": {
+      "vars": {
+        "APP_ENV": "production"
+      }
+    }
+  }
+}

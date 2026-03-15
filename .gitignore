@@ -15,6 +15,11 @@ build/
 *.exe
 *.dll
 node_modules/
+.next/
+.vinext/
+.wrangler/
+coverage/
+tmp/
 
 # Local / env
 .env

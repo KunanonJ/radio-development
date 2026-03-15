@@ -1,0 +1,22 @@
+{
+  "_meta": { "module": "streaming", "language": "en" },
+  "title": "Broadcasting",
+  "start": "Start",
+  "stop": "Stop",
+  "encoder": "Encoder",
+  "listeners": "Listeners",
+  "peak_listeners": "Peak listeners",
+  "bitrate": "Bitrate",
+  "codec": "Codec",
+  "icecast": "Icecast",
+  "shoutcast": "Shoutcast",
+  "rtmp": "RTMP",
+  "server_url": "Server URL",
+  "stream_key": "Stream key",
+  "builtin_server": "Built-in server",
+  "relay": "Relay",
+  "now_playing_export": "Now Playing export",
+  "statistics": "Statistics",
+  "archive": "Archive",
+  "tls": "Use TLS"
+}

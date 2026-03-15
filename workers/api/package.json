@@ -1,0 +1,17 @@
+{
+  "name": "@radioboss/control-api",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev --config wrangler.jsonc",
+    "deploy": "wrangler deploy --config wrangler.jsonc",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@radioboss/contracts": "*"
+  },
+  "devDependencies": {
+    "typescript": "latest",
+    "wrangler": "latest"
+  }
+}

@@ -11,7 +11,24 @@ This repository holds the **Product Requirements Document (PRD)** for the DJSoft
 | [**DJSoft.Net — Complete Product Requirements Document (Detailed Features).md**](./DJSoft.Net%20—%20Complete%20Product%20Requirements%20Document%20(Detailed%20Features).md) | Full PRD: RadioBOSS, RadioLogger, RadioCaster, RadioBOSS.FM, RadioBOSS Cloud, and Thai localization. |
 | [**DEVELOPMENT_ROADMAP.md**](./DEVELOPMENT_ROADMAP.md) | Phased development plan, priorities, and deliverables. |
 | [**docs/ARCHITECTURE.md**](./docs/ARCHITECTURE.md) | High-level architecture and module boundaries. |
+| [**docs/cloudflare/ARCHITECTURE_APPENDIX.md**](./docs/cloudflare/ARCHITECTURE_APPENDIX.md) | Cloudflare and `vinext` implementation scaffold, bindings, and repo topology. |
 | [**docs/THAI_LOCALIZATION_SPEC.md**](./docs/THAI_LOCALIZATION_SPEC.md) | Thai language technical spec and task breakdown. |
+| [**docs/IMPLEMENTATION.md**](./docs/IMPLEMENTATION.md) | Implementation guide: locales, validation, demo. |
+| [**docs/NEXT_DEVELOPMENT_PLAN.md**](./docs/NEXT_DEVELOPMENT_PLAN.md) | Next development plan: i18n sync, auth, D1, playout, e2e. |
+| [**docs/cloudflare/D1_AND_PROVISIONING.md**](./docs/cloudflare/D1_AND_PROVISIONING.md) | D1 migrations and station provisioning. |
+| [**docs/E2E_TESTING.md**](./docs/E2E_TESTING.md) | Playwright E2E tests and how to run them. |
+
+---
+
+## Implementation (Phase 1 — Thai)
+
+- **`locales/en/`** and **`locales/th/`** — JSON locale files for **9 modules**: common, player, playlist, library, scheduler, streaming, ads, reports, errors. UTF-8; Thai translations for UI strings.
+- **`scripts/validate_locales.py`** — Validates UTF-8, JSON, and key parity (en → th). Run: `python3 scripts/validate_locales.py`
+- **`scripts/load_locales.py`** — Python loader: `get_locale('th')` returns `t('module.key')` with fallback to English.
+- **`scripts/locale-loader.js`** — JS loader for web/Node: `loadLocale('th')` / `loadLocaleSync('th')` for same `t(key)` usage.
+- **`demo/i18n-demo.html`** — Language switcher (English / ภาษาไทย) and Thai font (Sarabun). Serve with e.g. `python3 -m http.server 8000` and open `http://localhost:8000/demo/i18n-demo.html`.
+
+See [docs/IMPLEMENTATION.md](./docs/IMPLEMENTATION.md) for adding strings and integrating with products.
 
 ---
 
@@ -36,9 +53,7 @@ This repository holds the **Product Requirements Document (PRD)** for the DJSoft
 
 ---
 
-## Suggested folder structure (future code)
-
-When adding code or assets, you may organize as:
+## Folder structure
 
 ```
 Radio Development/
@@ -46,18 +61,37 @@ Radio Development/
 ├── DEVELOPMENT_ROADMAP.md
 ├── docs/
 │   ├── ARCHITECTURE.md
+│   ├── CONTRIBUTING.md
+│   ├── IMPLEMENTATION.md
 │   └── THAI_LOCALIZATION_SPEC.md
-├── prd/
-│   └── DJSoft.Net — Complete Product Requirements Document (Detailed Features).md
-├── radioboss/          # (if developing RadioBOSS-related code)
-├── radiologger/        # (if developing RadioLogger-related code)
-├── radiocaster/        # (if developing RadioCaster-related code)
-├── cloud/              # (if developing RadioBOSS Cloud / FM)
-└── locales/            # Thai (and other) localization resources
-    └── th/
+├── locales/
+│   ├── en/             # English (9 modules)
+│   └── th/             # Thai (ภาษาไทย)
+├── scripts/
+│   ├── validate_locales.py
+│   ├── load_locales.py
+│   └── locale-loader.js
+├── demo/
+│   └── i18n-demo.html
+└── DJSoft.Net — Complete Product Requirements Document (Detailed Features).md
 ```
 
-The PRD and docs are the authority; adjust folders to match your actual repos and build system.
+Optional future: `radioboss/`, `radiologger/`, `radiocaster/`, `cloud/` for product-specific code.
+
+## Cloudflare / Vinext Scaffold
+
+The repository now includes a Cloudflare-first application scaffold:
+
+- `apps/console`, `apps/admin`, `apps/public` — `vinext` apps targeting Cloudflare Workers.
+- `workers/api` — control-plane APIs, queue consumer, workflow entrypoint, D1 migrations.
+- `workers/station-gateway` — Durable Object backed realtime station state.
+- `containers/playout` — playout service with `GET /stations/:id/live` (WAV stream); replace with ffmpeg for production.
+- `packages/contracts`, `packages/i18n`, `packages/ui` — shared domain, locale, and UI packages.
+
+- **Provision script** — `npm run provision` (or `CONTROL_API_URL=... node scripts/provision-station.mjs [tenantName] [stationName]`) to create a tenant and station via the control API.
+- **E2E** — `npm run test:e2e` runs Playwright tests (Public app by default; Console, Admin, API, Playout when `BASE_URL_*` are set). See [docs/E2E_TESTING.md](./docs/E2E_TESTING.md) for the full test list and env vars.
+
+See [docs/cloudflare/ARCHITECTURE_APPENDIX.md](./docs/cloudflare/ARCHITECTURE_APPENDIX.md) for the binding map and current implementation boundaries.
 
 ---
 

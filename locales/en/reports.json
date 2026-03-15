@@ -1,0 +1,15 @@
+{
+  "_meta": { "module": "reports", "language": "en" },
+  "title": "Report Generator",
+  "generate_report": "Generate report",
+  "date_range": "Date range",
+  "from": "From",
+  "to": "To",
+  "fields": "Fields",
+  "filters": "Filters",
+  "export_xls": "Export to XLS",
+  "export_pdf": "Export to PDF",
+  "print": "Print",
+  "airplay": "Airplay",
+  "compliance": "Compliance"
+}

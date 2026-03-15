@@ -1,0 +1,12 @@
+{
+  "_meta": { "module": "scheduler", "language": "en" },
+  "title": "Scheduler",
+  "events": "Events",
+  "add_event": "Add event",
+  "post_song_execution": "Post-song execution",
+  "recurring": "Recurring",
+  "start_time": "Start time",
+  "expires": "Expires",
+  "manual_mode": "Manual mode",
+  "commands": "Commands"
+}

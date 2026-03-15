@@ -1,0 +1,36 @@
+{
+  "name": "radioboss-public",
+  "main": "./worker/index.ts",
+  "compatibility_date": "2026-03-15",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "binding": "ASSETS",
+    "not_found_handling": "none"
+  },
+  "images": {
+    "binding": "IMAGES"
+  },
+  "vars": {
+    "APP_ENV": "development",
+    "STREAM_PLAYBACK_HOST": "stream.radioboss.local",
+    "PUBLIC_WIDGET_ID": "demo-player"
+  },
+  "services": [
+    {
+      "binding": "CONTROL_API",
+      "service": "radioboss-control-api"
+    }
+  ],
+  "env": {
+    "staging": {
+      "vars": {
+        "APP_ENV": "staging"
+      }
+    },
+    "production": {
+      "vars": {
+        "APP_ENV": "production"
+      }
+    }
+  }
+}

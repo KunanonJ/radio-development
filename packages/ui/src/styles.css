@@ -1,0 +1,141 @@
+.rb-shell {
+  min-height: 100vh;
+  padding: 3rem;
+  color: #f7efe1;
+  background:
+    radial-gradient(circle at top left, rgba(255, 180, 109, 0.22), transparent 28rem),
+    radial-gradient(circle at bottom right, rgba(127, 214, 176, 0.2), transparent 26rem),
+    linear-gradient(135deg, #10212e 0%, #0a1118 55%, #05080c 100%);
+}
+
+.rb-header,
+.rb-nav,
+.rb-grid {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.rb-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 2rem;
+  align-items: end;
+  margin-bottom: 1.5rem;
+}
+
+.rb-header h1 {
+  margin: 0;
+  font-size: clamp(2rem, 4vw, 3.75rem);
+  line-height: 0.95;
+}
+
+.rb-eyebrow {
+  margin: 0 0 0.75rem;
+  color: #7fd6b0;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+}
+
+.rb-subtitle {
+  max-width: 46rem;
+  margin: 0.75rem 0 0;
+  color: rgba(247, 239, 225, 0.72);
+}
+
+.rb-nav {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.75rem;
+}
+
+.rb-nav-link,
+.rb-actions a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 0.75rem 1rem;
+  text-decoration: none;
+  color: #f7efe1;
+  background: rgba(247, 239, 225, 0.08);
+  border: 1px solid rgba(247, 239, 225, 0.12);
+}
+
+.rb-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+}
+
+.rb-card,
+.rb-stat {
+  border-radius: 1.5rem;
+  border: 1px solid rgba(247, 239, 225, 0.1);
+  background: rgba(10, 17, 24, 0.72);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.28);
+}
+
+.rb-card {
+  padding: 1.25rem;
+}
+
+.rb-card-header h2,
+.rb-card-header p,
+.rb-card-body ul {
+  margin: 0;
+}
+
+.rb-card-header p,
+.rb-card-body li,
+.rb-stat span,
+.rb-stat small {
+  color: rgba(247, 239, 225, 0.72);
+}
+
+.rb-card-body ul {
+  padding-left: 1.25rem;
+}
+
+.rb-card-body li + li {
+  margin-top: 0.45rem;
+}
+
+.rb-stat {
+  padding: 1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.rb-stat strong {
+  font-size: 2rem;
+}
+
+.rb-pill {
+  display: inline-flex;
+  border-radius: 999px;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.85rem;
+}
+
+.rb-pill-neutral {
+  background: rgba(247, 239, 225, 0.08);
+}
+
+.rb-pill-accent {
+  background: rgba(127, 214, 176, 0.16);
+  color: #7fd6b0;
+}
+
+@media (max-width: 800px) {
+  .rb-shell {
+    padding: 1.25rem;
+  }
+
+  .rb-header {
+    flex-direction: column;
+    align-items: start;
+  }
+}

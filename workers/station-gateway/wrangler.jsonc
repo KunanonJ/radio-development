@@ -1,0 +1,43 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "radioboss-station-gateway",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-03-15",
+  "compatibility_flags": ["nodejs_compat"],
+  "vars": {
+    "APP_ENV": "development",
+    "PLAYOUT_ORIGIN": "http://127.0.0.1:8080"
+  },
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "STATION_COORDINATOR",
+        "class_name": "StationCoordinator"
+      }
+    ]
+  },
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": ["StationCoordinator"]
+    }
+  ],
+  "analytics_engine_datasets": [
+    {
+      "binding": "OBSERVABILITY",
+      "dataset": "radioboss_gateway_events"
+    }
+  ],
+  "env": {
+    "staging": {
+      "vars": {
+        "APP_ENV": "staging"
+      }
+    },
+    "production": {
+      "vars": {
+        "APP_ENV": "production"
+      }
+    }
+  }
+}

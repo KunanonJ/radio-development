@@ -1,0 +1,22 @@
+{
+  "_meta": { "module": "streaming", "language": "th" },
+  "title": "การออกอากาศ",
+  "start": "เริ่ม",
+  "stop": "หยุด",
+  "encoder": "เอนโคเดอร์",
+  "listeners": "ผู้ฟัง",
+  "peak_listeners": "ผู้ฟังสูงสุด",
+  "bitrate": "บิตเรต",
+  "codec": "โคเดค",
+  "icecast": "Icecast",
+  "shoutcast": "Shoutcast",
+  "rtmp": "RTMP",
+  "server_url": "URL เซิร์ฟเวอร์",
+  "stream_key": "สตรีมคีย์",
+  "builtin_server": "เซิร์ฟเวอร์ในตัว",
+  "relay": "รีเลย์",
+  "now_playing_export": "ส่งออกกำลังเล่น",
+  "statistics": "สถิติ",
+  "archive": "เก็บถาวร",
+  "tls": "ใช้ TLS"
+}

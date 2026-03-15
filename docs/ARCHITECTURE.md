@@ -106,6 +106,20 @@ This document provides a high-level architecture view derived from the PRD. It i
 
 ---
 
+## Cloudflare-First Implementation Scaffold
+
+The current repository scaffold implements the web suite around Cloudflare and `vinext`:
+
+- **`apps/console`, `apps/admin`, `apps/public`** run as `vinext` apps on Cloudflare Workers.
+- **`workers/api`** owns the control plane, D1-backed CRUD APIs, queue consumer, R2 upload flow, and station provisioning workflow.
+- **`workers/station-gateway`** owns one Durable Object per station for queue state, mode switches, alarms, and websocket fanout.
+- **`containers/playout`** is the initial playout service boundary for the media plane.
+- **`packages/contracts`, `packages/i18n`, `packages/ui`** keep domain models, Thai/English locale loading, and app chrome consistent across the repo.
+
+This scaffold is intentionally Cloudflare-first but not feature-complete. See [cloudflare/ARCHITECTURE_APPENDIX.md](./cloudflare/ARCHITECTURE_APPENDIX.md) for the exact topology and current limitations.
+
+---
+
 ## References
 
 - PRD: [DJSoft.Net — Complete Product Requirements Document](../DJSoft.Net%20—%20Complete%20Product%20Requirements%20Document%20(Detailed%20Features).md)

@@ -1,0 +1,26 @@
+{
+  "name": "@radioboss/admin",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vinext dev",
+    "build": "vinext deploy --dry-run",
+    "bundle": "vinext build",
+    "start": "vinext start",
+    "deploy": "vinext deploy",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@radioboss/contracts": "*",
+    "@radioboss/i18n": "*",
+    "@radioboss/ui": "*",
+    "next": "^16.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "typescript": "latest",
+    "vinext": "latest",
+    "wrangler": "latest"
+  }
+}

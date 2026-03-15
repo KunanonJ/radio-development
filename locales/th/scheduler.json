@@ -1,0 +1,12 @@
+{
+  "_meta": { "module": "scheduler", "language": "th" },
+  "title": "ตัวจัดตาราง",
+  "events": "เหตุการณ์",
+  "add_event": "เพิ่มเหตุการณ์",
+  "post_song_execution": "ทำงานหลังจบเพลง",
+  "recurring": "ทำซ้ำ",
+  "start_time": "เวลาเริ่ม",
+  "expires": "หมดอายุ",
+  "manual_mode": "โหมดมือ",
+  "commands": "คำสั่ง"
+}

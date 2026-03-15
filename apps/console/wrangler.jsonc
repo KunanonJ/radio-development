@@ -1,0 +1,53 @@
+{
+  "name": "radioboss-console",
+  "main": "./worker/index.ts",
+  "compatibility_date": "2026-03-15",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "binding": "ASSETS",
+    "not_found_handling": "none"
+  },
+  "images": {
+    "binding": "IMAGES"
+  },
+  "vars": {
+    "APP_ENV": "development",
+    "CONTROL_API_URL": "http://127.0.0.1:8788",
+    "STREAM_PLAYBACK_HOST": "stream.radioboss.local"
+  },
+  "services": [
+    {
+      "binding": "CONTROL_API",
+      "service": "radioboss-control-api"
+    },
+    {
+      "binding": "STATION_GATEWAY",
+      "service": "radioboss-station-gateway"
+    }
+  ],
+  "d1_databases": [
+    {
+      "binding": "GLOBAL_DB",
+      "database_name": "radioboss-global-dev",
+      "database_id": "global-dev"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "MEDIA_BUCKET",
+      "bucket_name": "radioboss-media-dev"
+    }
+  ],
+  "env": {
+    "staging": {
+      "vars": {
+        "APP_ENV": "staging"
+      }
+    },
+    "production": {
+      "vars": {
+        "APP_ENV": "production"
+      }
+    }
+  }
+}
