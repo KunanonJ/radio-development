@@ -33,7 +33,7 @@
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "@vitejs/plugin-rsc": "latest",
-    "next": "^16.0.0",
+    "next": "^16.1.7",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-server-dom-webpack": "latest",
