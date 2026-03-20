@@ -1,0 +1,120 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function tenantMembershipId(tenantId) {
+      return tenantId + "_" + request.auth.uid;
+    }
+
+    function isTenantBillingAdmin(tenantId) {
+      return signedIn() &&
+        exists(/databases/$(database)/documents/tenantMemberships/$(tenantMembershipId(tenantId))) &&
+        (
+          get(/databases/$(database)/documents/tenantMemberships/$(tenantMembershipId(tenantId))).data.role == "owner" ||
+          get(/databases/$(database)/documents/tenantMemberships/$(tenantMembershipId(tenantId))).data.role == "admin"
+        );
+    }
+
+    match /tenants/{tenantId} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
+
+    match /stations/{stationId} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
+
+    match /workerCommands/{commandId} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
+
+    match /workerStatuses/{statusId} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
+
+    match /mediaAssets/{mediaAssetId} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
+
+    match /stationSummaries/{stationId} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
+
+    match /playbackSettings/{stationId} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
+
+    match /playlists/{playlistId} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
+
+    match /scheduleEvents/{scheduleEventId} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
+
+    match /relays/{relayId} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
+
+    match /recordingJobs/{recordingJobId} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
+
+    match /reportJobs/{reportJobId} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
+
+    match /widgetConfigs/{widgetConfigId} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
+
+    match /billingAccounts/{tenantId} {
+      allow read: if isTenantBillingAdmin(tenantId);
+      allow write: if false;
+    }
+
+    match /billingSubscriptions/{stationId} {
+      allow read: if isTenantBillingAdmin(get(/databases/$(database)/documents/stations/$(stationId)).data.tenantId);
+      allow write: if false;
+    }
+
+    match /tenantMemberships/{membershipId} {
+      allow read: if signedIn() &&
+        (
+          resource.data.userId == request.auth.uid ||
+          isTenantBillingAdmin(resource.data.tenantId)
+        );
+      allow write: if false;
+    }
+
+    match /auditLogs/{auditId} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
+
+    match /localizationBundles/{locale} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

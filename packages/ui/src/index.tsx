@@ -1,75 +1,78 @@
-import type { ReactNode } from "react";
-import "./styles.css";
+import type { CSSProperties, PropsWithChildren } from "react";
 
-export interface NavItem {
-  href: string;
-  label: string;
-}
+const panelStyle: CSSProperties = {
+  background: "var(--surface)",
+  border: "1px solid var(--border)",
+  borderRadius: 24,
+  boxShadow: "0 20px 60px var(--shadow)"
+};
 
-export function AppShell(props: {
-  appName: string;
+export function AppShell({
+  eyebrow,
+  title,
+  description,
+  children
+}: PropsWithChildren<{
+  eyebrow: string;
   title: string;
-  subtitle: string;
-  locale: string;
-  nav: NavItem[];
-  actions?: ReactNode;
-  children: ReactNode;
-}) {
-  const { appName, title, subtitle, locale, nav, actions, children } = props;
+  description: string;
+}>) {
   return (
-    <div className="rb-shell">
-      <header className="rb-header">
-        <div>
-          <p className="rb-eyebrow">
-            {appName} / {locale.toUpperCase()}
+    <main style={{ padding: 32 }}>
+      <div style={{ maxWidth: 1120, margin: "0 auto", display: "grid", gap: 24 }}>
+        <section style={{ ...panelStyle, padding: 32 }}>
+          <p style={{ margin: 0, textTransform: "uppercase", letterSpacing: "0.12em", color: "var(--accent)" }}>
+            {eyebrow}
           </p>
-          <h1>{title}</h1>
-          <p className="rb-subtitle">{subtitle}</p>
-        </div>
-        <div className="rb-actions">{actions}</div>
-      </header>
-      <nav className="rb-nav">
-        {nav.map((item) => (
-          <a className="rb-nav-link" href={item.href} key={item.href}>
-            {item.label}
-          </a>
-        ))}
-      </nav>
-      <main className="rb-grid">{children}</main>
-    </div>
-  );
-}
-
-export function SectionCard(props: {
-  title: string;
-  description?: string;
-  children: ReactNode;
-}) {
-  return (
-    <section className="rb-card">
-      <div className="rb-card-header">
-        <h2>{props.title}</h2>
-        {props.description ? <p>{props.description}</p> : null}
+          <h1 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(2.25rem, 5vw, 4.5rem)", marginBottom: 12 }}>
+            {title}
+          </h1>
+          <p style={{ margin: 0, maxWidth: 760, color: "var(--muted)", fontSize: "1.1rem" }}>{description}</p>
+        </section>
+        <section>{children}</section>
       </div>
-      <div className="rb-card-body">{props.children}</div>
-    </section>
+    </main>
   );
 }
 
-export function StatCard(props: {
-  label: string;
-  value: string;
-  hint?: string;
+export function FeatureCard({
+  title,
+  description,
+  href
+}: {
+  title: string;
+  description: string;
+  href?: string;
 }) {
-  return (
-    <article className="rb-stat">
-      <span>{props.label}</span>
-      <strong>{props.value}</strong>
-      {props.hint ? <small>{props.hint}</small> : null}
+  const content = (
+    <article style={{ ...panelStyle, padding: 24, height: "100%" }}>
+      <h2 style={{ marginTop: 0, fontFamily: "var(--font-display)" }}>{title}</h2>
+      <p style={{ marginBottom: 0, color: "var(--muted)" }}>{description}</p>
     </article>
   );
+
+  return href ? <a href={href}>{content}</a> : content;
 }
 
-export function Pill(props: { tone?: "neutral" | "accent"; children: ReactNode }) {
-  return <span className={`rb-pill rb-pill-${props.tone ?? "neutral"}`}>{props.children}</span>;
+export function MetricGrid({
+  metrics
+}: {
+  metrics: Array<{ label: string; value: string }>;
+}) {
+  return (
+    <section
+      style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
+        gap: 20
+      }}
+    >
+      {metrics.map((metric) => (
+        <article key={metric.label} style={{ ...panelStyle, padding: 24 }}>
+          <p style={{ margin: 0, color: "var(--muted)" }}>{metric.label}</p>
+          <strong style={{ fontSize: "2rem", fontFamily: "var(--font-display)" }}>{metric.value}</strong>
+        </article>
+      ))}
+    </section>
+  );
 }

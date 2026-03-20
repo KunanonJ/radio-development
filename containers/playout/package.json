@@ -1,8 +1,0 @@
-{
-  "name": "@radioboss/playout-container",
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "start": "node src/server.mjs"
-  }
-}

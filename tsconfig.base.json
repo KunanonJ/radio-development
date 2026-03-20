@@ -1,22 +1,29 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "lib": [
+      "ES2022",
+      "DOM",
+      "DOM.Iterable"
+    ],
     "module": "ESNext",
     "moduleResolution": "Bundler",
-    "jsx": "preserve",
     "strict": true,
-    "noEmit": true,
-    "allowJs": false,
-    "esModuleInterop": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
-    "types": ["@cloudflare/workers-types", "node"],
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
     "paths": {
-      "@radioboss/contracts": ["packages/contracts/src/index.ts"],
-      "@radioboss/i18n": ["packages/i18n/src/index.ts"],
-      "@radioboss/ui": ["packages/ui/src/index.tsx"]
+      "@the-urban-radio/contracts": [
+        "packages/contracts/src/index.ts"
+      ],
+      "@the-urban-radio/i18n": [
+        "packages/i18n/src/index.ts"
+      ],
+      "@the-urban-radio/ui": [
+        "packages/ui/src/index.tsx"
+      ]
     }
   }
 }

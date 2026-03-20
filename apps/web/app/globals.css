@@ -1,0 +1,34 @@
+:root {
+  --background: #f3efe5;
+  --surface: #fffaf1;
+  --foreground: #1f1f1a;
+  --muted: #6d6558;
+  --accent: #bf5b04;
+  --accent-soft: #f3c07c;
+  --border: #dccfb7;
+  --shadow: rgba(39, 27, 9, 0.12);
+  --font-body: "Sarabun", "Noto Sans Thai", sans-serif;
+  --font-display: "Space Grotesk", "Sarabun", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: radial-gradient(circle at top, #fff7eb 0%, #efe6d4 42%, #e7ddcb 100%);
+  color: var(--foreground);
+  font-family: var(--font-body);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+main {
+  min-height: 100vh;
+}

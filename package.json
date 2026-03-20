@@ -1,46 +1,38 @@
 {
-  "name": "radioboss-cloudflare-suite",
+  "name": "the-urban-radio",
   "private": true,
+  "version": "0.1.0",
   "type": "module",
+  "engines": {
+    "node": "20 || 22"
+  },
   "workspaces": [
     "apps/*",
-    "containers/*",
-    "packages/*",
-    "workers/*"
+    "functions",
+    "packages/*"
   ],
   "scripts": {
+    "dev:web": "npm run dev --workspace @the-urban-radio/web",
+    "dev:emulators": "node scripts/firebase-cli.mjs emulators:start --only auth,firestore,functions,storage,pubsub",
+    "dev:worker:automation": "go run ./workers/automation",
+    "dev:worker:indexer": "go run ./workers/indexer",
     "build": "npm run build --workspaces --if-present",
-    "dev:console": "npm run dev --workspace @radioboss/console",
-    "dev:admin": "npm run dev --workspace @radioboss/admin",
-    "dev:public": "npm run dev --workspace @radioboss/public",
-    "dev:api": "npm run dev --workspace @radioboss/control-api",
-    "dev:gateway": "npm run dev --workspace @radioboss/station-gateway",
-    "dev:playout": "npm run start --workspace @radioboss/playout-container",
+    "lint": "npm run lint --workspaces --if-present",
     "typecheck": "npm run typecheck --workspaces --if-present",
     "test": "vitest run",
     "test:watch": "vitest",
-    "validate:locales": "python3 scripts/validate_locales.py",
-    "provision": "node scripts/provision-station.mjs",
-    "test:e2e": "playwright test",
-    "test:e2e:ui": "playwright test --ui"
+    "test:go": "go test ./workers/...",
+    "test:functions": "npm run test --workspace @the-urban-radio/functions",
+    "test:e2e": "playwright test"
   },
   "devDependencies": {
-    "@playwright/test": "latest",
-    "@cloudflare/containers": "latest",
-    "@cloudflare/vite-plugin": "latest",
-    "@cloudflare/workers-types": "latest",
-    "@types/node": "latest",
-    "@types/react": "latest",
-    "@types/react-dom": "latest",
-    "@vitejs/plugin-rsc": "latest",
-    "next": "^16.0.0",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "react-server-dom-webpack": "latest",
-    "tsx": "latest",
-    "typescript": "latest",
-    "vinext": "latest",
-    "vitest": "latest",
-    "wrangler": "latest"
+    "@playwright/test": "^1.55.0",
+    "@types/node": "^24.0.0",
+    "@types/react": "^19.0.10",
+    "@types/react-dom": "^19.0.4",
+    "firebase-tools": "^13.34.0",
+    "tsx": "^4.20.3",
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
   }
 }

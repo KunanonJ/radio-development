@@ -1,29 +1,8 @@
-import { defineConfig, devices } from "@playwright/test";
-
-const baseURL = process.env.BASE_URL || "http://localhost:3000";
+import { defineConfig } from "@playwright/test";
 
 export default defineConfig({
-  testDir: "e2e",
-  fullyParallel: false,
-  forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 0,
-  workers: 1,
-  timeout: 30_000,
-  expect: { timeout: 10_000 },
-  reporter: "list",
+  testDir: "./e2e",
   use: {
-    baseURL,
-    trace: "on-first-retry",
-    screenshot: "only-on-failure",
-    video: "off"
-  },
-  projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
-  webServer: process.env.CI
-    ? undefined
-    : {
-        command: "npm run dev:public",
-        url: baseURL,
-        reuseExistingServer: !process.env.CI,
-        timeout: 60_000
-      }
+    baseURL: process.env.PLAYWRIGHT_BASE_URL ?? "http://127.0.0.1:3000"
+  }
 });

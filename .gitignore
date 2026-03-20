@@ -5,6 +5,7 @@ Thumbs.db
 # IDE
 .idea/
 .vscode/
+.cursor/
 *.swp
 *.swo
 *~
@@ -20,6 +21,7 @@ node_modules/
 .wrangler/
 coverage/
 tmp/
+*.tsbuildinfo
 
 # Local / env
 .env
