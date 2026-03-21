@@ -3,127 +3,131 @@ import Link from "next/link";
 import styles from "./home.module.css";
 import { primaryKeyword, siteDescription, siteKeywords, siteName, siteUrl } from "../lib/site";
 
-const updatedDateLabel = "March 20, 2026";
+const updatedDateLabel = "March 21, 2026";
+const updatedDateIso = "2026-03-21";
 
-const heroSignals = [
-  "Thai-ready metadata and public outputs",
-  "Single control plane for playlists, relays, and recording jobs",
-  "Server-rendered web experience with Firebase + Cloud Run",
-  "Built for one-station success before multi-tenant scale"
+const proofSignals = [
+  {
+    value: "2 operating surfaces",
+    label: "Cloud manages scheduling and widgets. FM handles provisioning, billing, and station endpoints."
+  },
+  {
+    value: "1 web control plane",
+    label: "Operators work from a browser instead of stitching together desktop software and manual exports."
+  },
+  {
+    value: "1,000,000-asset design target",
+    label: "Large library support is planned around paginated access and summary documents, not full collection loads."
+  },
+  {
+    value: "Thai-ready by design",
+    label: "UTF-8-safe metadata, widgets, player feeds, and reporting are part of the platform contract."
+  }
 ];
 
-const featureCards = [
+const heroPillars = [
   {
-    title: "Cloud scheduling",
-    description:
-      "Create playlists, queue events, relay windows, and recording jobs from one web control surface instead of juggling separate desktop utilities."
+    title: "Cloud",
+    description: "Playlists, scheduler, relays, reports, widgets, and queue monitoring."
   },
   {
-    title: "Operator-grade visibility",
-    description:
-      "Watch worker commands, relay states, playback preferences, and library counts in a single station view built for day-to-day operational decisions."
+    title: "FM",
+    description: "Station provisioning, listener-capacity planning, billing workflows, and stream endpoints."
   },
   {
-    title: "Public outputs",
-    description:
-      "Publish widget feeds, public player surfaces, and station information endpoints without building a separate public web stack for every station."
+    title: "Workers",
+    description: "Relay failover, recording, export dispatch, and indexing preparation outside the browser."
   },
   {
-    title: "Thai-ready publishing",
+    title: "Outputs",
+    description: "Public player feeds and widget endpoints that stay aligned with station state."
+  }
+];
+
+const outcomeCards = [
+  {
+    title: "Replace fragmented tooling",
     description:
-      "Support Thai-safe input, UTF-8 output, and Thai-focused presentation requirements across dashboards, widgets, exports, and metadata workflows."
+      "Move playlists, schedules, relays, recording jobs, and public outputs into one product instead of spreading them across separate desktop tools and scripts."
+  },
+  {
+    title: "Operate remotely with confidence",
+    description:
+      "Owners, admins, and operators can review the same station state without needing access to one specific studio machine."
+  },
+  {
+    title: "Watch live operational risk",
+    description:
+      "Worker commands, relay states, queue refresh flows, and recording jobs stay visible so teams can intervene before small issues become dead air."
+  },
+  {
+    title: "Publish listener-facing outputs",
+    description:
+      "Use the same platform to power internal operations and public-facing widgets or player feeds without creating a second web stack."
   }
 ];
 
 const workflowSteps = [
   {
-    title: "Provision the station",
+    title: "Provision the station in FM",
     description:
-      "Operators sign in, create a tenant and station, and establish the control-plane record that workers and dashboards use as the source of truth."
+      "Create the tenant and station record, set the plan context, and establish the operational baseline the rest of the platform will use."
   },
   {
-    title: "Configure the schedule",
+    title: "Configure the station in Cloud",
     description:
-      "Teams add media metadata, playlists, schedule events, relays, recording jobs, and playback settings from the cloud dashboard and FM operations surface."
+      "Add playlists, schedules, relays, recording jobs, playback preferences, and listener-facing output settings from the web control plane."
   },
   {
-    title: "Monitor live operations",
+    title: "Let workers execute and report back",
     description:
-      "Worker status, queue-refresh commands, recording activity, and public outputs flow back into the dashboard so operators can act before problems spread."
+      "Functions route commands into background workers, workers run the long-lived tasks, and station state returns to Firestore for live review."
   }
 ];
 
-const comparisonRows = [
+const surfaceCards = [
   {
-    label: "Operational model",
-    desktop: "Local desktop software tied to a single machine or studio workstation.",
-    urban: "Web-first control plane with worker-driven execution and remote station access."
+    title: "Scheduling and rotation control",
+    description:
+      "Manage playlists, schedules, relays, and timing-sensitive station workflows from a product designed for radio operations, not generic project management."
   },
   {
-    label: "Station rollout",
-    desktop: "Manual environment setup per machine, often with fragile local assumptions.",
-    urban: "Provisioned through FM and Functions so the station starts with a repeatable control-plane model."
+    title: "Recording and archival jobs",
+    description:
+      "Treat recording, logging, retention, and export dispatch as first-class station workflows instead of fragile add-ons."
   },
   {
-    label: "Relay and recording control",
-    desktop: "Usually split across plugins, scripts, or operator memory.",
-    urban: "Relay and recording jobs are first-class station workflows with command visibility."
+    title: "Station billing and listener plans",
+    description:
+      "Keep listener capacity, plan status, and billing references visible inside the same operating story as the rest of the station."
   },
   {
-    label: "Thai readiness",
-    desktop: "Often bolted on through manual fonts, encodings, or export workarounds.",
-    urban: "Thai support is part of the product surface, not an afterthought."
-  },
-  {
-    label: "Team access",
-    desktop: "Best for one studio operator seated at the right machine.",
-    urban: "Built for owners, admins, operators, and remote operational review."
+    title: "Widgets and player feeds",
+    description:
+      "Expose public-facing now-playing and station output surfaces from the same source of truth that powers the internal dashboards."
   }
 ];
 
-const controlPlaneCards = [
+const thaiCards = [
   {
-    title: "Station overview",
+    title: "Thai-safe metadata handling",
     description:
-      "Track provisioning status, plan context, worker health, library totals, latest commands, and public output readiness."
+      "Station names, media titles, playlist labels, and public payloads are designed to preserve Thai text instead of forcing post-processing fixes."
   },
   {
-    title: "Playback profile",
+    title: "Thai-ready public outputs",
     description:
-      "Store transitions, sound enhancer, sound check, lossless, spatial audio, HDMI passthrough, and video quality preferences at the station level."
+      "Widgets, player feeds, and future public web surfaces can render Thai copy correctly because Thai support is handled at the platform level."
   },
   {
-    title: "Library at scale",
+    title: "Thai-aware search preparation",
     description:
-      "Design for paginated, materialized summaries and very large media libraries instead of loading full collections into the browser."
+      "The indexing worker already separates search preparation from the main control plane so Thai search quality can improve without rewriting the app."
   },
   {
-    title: "Billing and hosting",
+    title: "Thai as an acceptance gate",
     description:
-      "Manage plan workflows, billing handoff, and hosted station operations from FM without splitting the operational story across tools."
-  }
-];
-
-const thaiSupportCards = [
-  {
-    title: "Thai-safe text handling",
-    description:
-      "The Urban Radio is designed so station names, media titles, playlist labels, and widget payloads preserve Thai text without encoding loss."
-  },
-  {
-    title: "Thai-aware public outputs",
-    description:
-      "The same platform that serves the dashboard can also feed public player surfaces and widgets that need to render Thai copy correctly."
-  },
-  {
-    title: "Indexing-ready architecture",
-    description:
-      "The worker model already separates automation and indexing so Thai search quality can mature without rewriting the control plane."
-  },
-  {
-    title: "Export-first discipline",
-    description:
-      "Thai rendering is treated as an acceptance gate for dashboards, APIs, widgets, and exports rather than a marketing checkbox."
+      "The Urban Radio treats Thai rendering and export quality as launch criteria, not as a later localization backlog item."
   }
 ];
 
@@ -131,41 +135,77 @@ const audienceCards = [
   {
     title: "Internet radio operators",
     description:
-      "Use The Urban Radio to centralize playlists, relays, recording jobs, and public outputs without depending on a local studio desktop."
+      "Use one cloud product for playlists, scheduling, relays, recordings, and widgets without depending on a local studio desktop."
   },
   {
     title: "FM simulcast teams",
     description:
-      "Run hosted station operations, listener-capacity plans, and station health views alongside cloud scheduling and archive workflows."
+      "Manage station provisioning, billing, and hosted stream operations while keeping daily automation work in the same platform."
   },
   {
-    title: "Managed service providers",
+    title: "Multi-station operators",
     description:
-      "Support single-station depth first, then grow into repeatable tenant and role-aware operations once the control model is proven."
+      "Start with a strong one-station operating model, then extend the same tenant-aware control plane across a broader portfolio."
   },
   {
     title: "Thai-first broadcasters",
     description:
-      "Choose a stack designed to treat Thai support as a product requirement across UI, search preparation, and output quality."
+      "Choose a radio platform that treats Thai-safe metadata, widgets, search preparation, and reporting as product requirements."
   }
 ];
 
-const platformSignals = [
+const evaluationFacts = [
   {
-    title: "Primary category",
-    description: "Cloud radio automation software for playlisting, relay control, recording, and hosted station operations."
+    term: "Primary category",
+    description: "Cloud radio automation software for internet stations and FM operations teams."
   },
   {
-    title: "Platform architecture",
-    description: "Firebase control plane, Firestore state, Functions APIs, and Cloud Run workers for automation and indexing."
+    term: "Product surfaces",
+    description: "The Urban Radio Cloud for operations and The Urban Radio FM for provisioning and plan administration."
   },
   {
-    title: "Operational scope",
-    description: "Cloud dashboard, FM operations surface, public player endpoints, widget feeds, and worker status visibility."
+    term: "Control plane",
+    description: "Firebase Auth, Firestore, Storage, and Functions manage identity, state, and command routing."
   },
   {
-    title: "Localization stance",
-    description: "Thai-ready metadata, widgets, search preparation, and export quality are treated as launch-level requirements."
+    term: "Worker plane",
+    description: "Cloud Run services handle long-running relay, recording, export, and indexing workflows."
+  },
+  {
+    term: "Public outputs",
+    description: "Widget feeds and player surfaces can be driven from the same station state as the internal dashboards."
+  },
+  {
+    term: "Localization stance",
+    description: "Thai-ready rendering, metadata handling, and future Thai-aware search are part of the core product direction."
+  }
+];
+
+const comparisonRows = [
+  {
+    label: "Operating model",
+    desktop: "Usually tied to a studio machine or one operator seat.",
+    urban: "Web-first control plane that stays available to owners, admins, and operators."
+  },
+  {
+    label: "Station rollout",
+    desktop: "Manual setup on the right machine with local assumptions and hidden dependencies.",
+    urban: "Provisioned through FM with repeatable station records, plan context, and authenticated APIs."
+  },
+  {
+    label: "Relay and recording workflows",
+    desktop: "Often split across plugins, scripts, or operator memory.",
+    urban: "Workers run relay failover, recording, and export-oriented jobs as explicit platform workflows."
+  },
+  {
+    label: "Public outputs",
+    desktop: "Commonly requires a separate web stack or custom glue code.",
+    urban: "Widgets and player feeds can come from the same station state that powers the operator dashboards."
+  },
+  {
+    label: "Thai readiness",
+    desktop: "Frequently depends on manual encoding and font workarounds.",
+    urban: "Thai-safe metadata and outputs are part of the product contract."
   }
 ];
 
@@ -173,32 +213,32 @@ const faqs = [
   {
     question: "What is The Urban Radio?",
     answer:
-      "The Urban Radio is cloud radio automation software for stations that need playlists, scheduling, relays, recording, widgets, and hosted operations without depending on a desktop client. It combines a web control plane with worker-driven execution so operators can manage one station cleanly before scaling wider."
+      "The Urban Radio is cloud radio automation software for internet and FM stations that want playlists, scheduling, relay control, recording, widgets, billing workflows, and Thai-ready outputs in one web product."
   },
   {
-    question: "How does cloud radio automation work in The Urban Radio?",
+    question: "How does The Urban Radio work?",
     answer:
-      "The Urban Radio stores station configuration in a Firebase control plane, validates operator actions through authenticated APIs, and sends execution work to background automation workers. That model keeps the browser focused on management while worker processes handle command lifecycles, relay actions, recording flows, and indexing preparation."
+      "Operators manage station state in the web app, Firebase stores the control-plane records, Functions route commands, and Cloud Run workers execute long-running tasks such as relay actions, recording jobs, exports, and indexing preparation."
   },
   {
     question: "Who should use The Urban Radio?",
     answer:
-      "The Urban Radio fits internet radio operators, FM simulcast teams, managed service providers, and broadcasters that need Thai-ready station operations. It is especially useful when teams want a cloud-first workflow for station setup, playlisting, public outputs, and operational visibility instead of a local studio-only toolchain."
+      "The product fits internet radio teams, FM simulcast operators, multi-station groups, and broadcasters that need remote visibility, hosted workflows, and Thai-ready public outputs instead of a desktop-only automation stack."
   },
   {
     question: "Does The Urban Radio support Thai radio workflows?",
     answer:
-      "Yes. The Urban Radio is designed so Thai text survives input, display, widgets, APIs, and export-oriented workflows. Thai support is treated as a product acceptance gate, which is important for operators who cannot accept encoding errors, broken glyphs, or weak Thai metadata handling in public-facing station outputs."
+      "Yes. Thai-safe metadata handling, UTF-8-ready outputs, widgets, player feeds, and future Thai-aware search preparation are treated as product requirements rather than optional localization work."
   },
   {
     question: "Can The Urban Radio support large music libraries?",
     answer:
-      "The platform is designed around paginated media access, summary documents, and an eventual indexing path so it can grow far beyond small prototype libraries. The current architecture already assumes materialized counts and bounded list views, which is the right direction for stations planning very large media catalogs."
+      "The platform direction is built around paginated media access, materialized summaries, and indexing workflows so stations can grow toward very large libraries without forcing the browser to load entire collections."
   },
   {
-    question: "Why choose The Urban Radio instead of desktop radio automation software?",
+    question: "Why choose The Urban Radio over desktop radio automation software?",
     answer:
-      "Choose The Urban Radio when you need remote access, hosted operations, consistent station provisioning, and web-based operational visibility. Desktop radio automation software can work well for one local machine, but cloud-first teams usually need a control plane that stays accessible, auditable, and easier to evolve across stations."
+      "Choose The Urban Radio when you need remote access, repeatable station provisioning, worker-driven relay and recording workflows, billing visibility, and public outputs from one web-first control plane."
   }
 ];
 
@@ -219,6 +259,14 @@ const pageSchemas = [
   },
   {
     "@context": "https://schema.org",
+    "@type": "WebPage",
+    name: `${siteName} Landing Page`,
+    url: siteUrl,
+    description: siteDescription,
+    dateModified: updatedDateIso
+  },
+  {
+    "@context": "https://schema.org",
     "@type": "SoftwareApplication",
     name: siteName,
     applicationCategory: "BusinessApplication",
@@ -227,10 +275,10 @@ const pageSchemas = [
     description: siteDescription,
     inLanguage: ["en", "th"],
     featureList: [
-      "Cloud dashboard for playlists, schedules, relays, and recording jobs",
-      "FM operations surface for station provisioning and hosted plan workflows",
-      "Thai-ready public outputs and widget feeds",
-      "Worker-driven automation and indexing architecture"
+      "Cloud dashboard for playlists, schedules, relays, widgets, and queue monitoring",
+      "FM operations surface for station provisioning, billing workflows, and stream endpoints",
+      "Cloud Run workers for relay failover, recording, export dispatch, and indexing preparation",
+      "Thai-ready metadata handling, public outputs, and reporting workflows"
     ]
   },
   {
@@ -280,33 +328,26 @@ export default function HomePage() {
             <span>{siteName}</span>
           </Link>
 
-          <nav className={styles.topLinks} aria-label="Section navigation">
-            <a href="#overview" className={styles.pillLink}>
-              Overview
-            </a>
-            <a href="#compare" className={styles.pillLink}>
-              Compare
-            </a>
-            <a href="#thai" className={styles.pillLink}>
-              Thai Support
-            </a>
-            <a href="#faq" className={styles.pillLink}>
-              FAQ
-            </a>
-          </nav>
+          <div className={styles.utilityLinks}>
+            <Link href="/docs" className={styles.utilityLink}>
+              Architecture
+            </Link>
+            <Link href="/privacy" className={styles.utilityLink}>
+              Privacy
+            </Link>
+            <span className={styles.utilityNote}>Updated {updatedDateLabel}</span>
+          </div>
         </header>
 
         <section className={styles.hero}>
           <div className={styles.heroCopy}>
-            <p className={styles.eyebrow}>Cloud Radio Automation Software</p>
-            <h1 className={styles.heroTitle}>
-              Cloud radio automation software for stations that need to move faster.
-            </h1>
+            <p className={styles.eyebrow}>{primaryKeyword}</p>
+            <h1 className={styles.heroTitle}>Cloud radio automation software for internet and FM stations.</h1>
             <p className={styles.heroLead}>
-              {siteName} is {primaryKeyword} for operators who want playlists, schedules, relay control,
-              recording workflows, public outputs, and hosted station operations in one web-first product.
-              It is built for internet stations, FM simulcasts, and Thai-ready broadcasters that do not want
-              their operation tied to a desktop client.
+              {siteName} is {primaryKeyword} for teams that want playlists, scheduling, relay control, recording,
+              widgets, billing workflows, and Thai-ready outputs in one web-first product. It replaces desktop-heavy
+              station management with a Firebase control plane, Cloud Run workers, and a clearer operating model for
+              modern radio teams.
             </p>
 
             <div className={styles.heroActions}>
@@ -314,70 +355,78 @@ export default function HomePage() {
                 Launch A Station
               </Link>
               <Link href="/cloud" className={styles.secondaryAction}>
-                View The Control Plane
+                Open The Control Plane
               </Link>
               <Link href="/docs" className={styles.secondaryAction}>
-                Read Architecture
+                Review The Architecture
               </Link>
             </div>
 
-            <div className={styles.heroMeta} aria-label="Key product signals">
-              {heroSignals.map((signal) => (
-                <span key={signal} className={styles.metaChip}>
-                  {signal}
-                </span>
-              ))}
-            </div>
+            <p className={styles.heroNote}>
+              Start in <Link href="/fm" className={styles.inlineLink}>FM</Link> to provision a station, move into{" "}
+              <Link href="/cloud" className={styles.inlineLink}>Cloud</Link> to manage schedules and relays, and use{" "}
+              <Link href="/privacy" className={styles.inlineLink}>Privacy</Link> plus{" "}
+              <Link href="/docs" className={styles.inlineLink}>Architecture</Link> as the trust layer for buyers and
+              reviewers.
+            </p>
           </div>
 
-          <aside className={styles.heroPanel} aria-label="Product snapshot">
-            <p className={styles.panelLabel}>Product Snapshot</p>
-            <h2 className={styles.panelTitle}>A focused platform for modern station operations.</h2>
+          <aside className={styles.heroPanel} aria-label="Operating model">
+            <p className={styles.panelLabel}>Operating Model</p>
+            <p className={styles.panelTitle}>One product for station control, worker execution, and public outputs.</p>
+            <p className={styles.panelLead}>
+              The Urban Radio is built for web-only station operations. The browser handles management, Firebase stores
+              operational state, and workers handle the long-running tasks that should not block the UI.
+            </p>
 
-            <div className={styles.snapshotList}>
-              <div className={styles.snapshotItem}>
-                <span className={styles.snapshotValue}>One-station-first rollout</span>
-                <span className={styles.snapshotCaption}>
-                  Start with a clean operator path before layering on larger tenant operations.
-                </span>
-              </div>
-              <div className={styles.snapshotItem}>
-                <span className={styles.snapshotValue}>1,000,000-song-ready library design</span>
-                <span className={styles.snapshotCaption}>
-                  Built around paginated media access and summary documents instead of whole-library browser loads.
-                </span>
-              </div>
-              <div className={styles.snapshotItem}>
-                <span className={styles.snapshotValue}>Thai as a launch requirement</span>
-                <span className={styles.snapshotCaption}>
-                  Thai rendering, metadata preservation, widgets, and exports are part of the product contract.
-                </span>
-              </div>
-              <div className={styles.snapshotItem}>
-                <span className={styles.snapshotValue}>Updated {updatedDateLabel}</span>
-                <span className={styles.snapshotCaption}>
-                  This landing page reflects the current Firebase, Cloud Run, widget, billing, and worker model.
-                </span>
-              </div>
+            <div className={styles.pillarList}>
+              {heroPillars.map((pillar) => (
+                <div key={pillar.title} className={styles.pillarItem}>
+                  <span className={styles.pillarValue}>{pillar.title}</span>
+                  <span className={styles.pillarText}>{pillar.description}</span>
+                </div>
+              ))}
+            </div>
+
+            <div className={styles.panelLinks}>
+              <Link href="/cloud" className={styles.panelLink}>
+                Cloud Surface
+              </Link>
+              <Link href="/fm" className={styles.panelLink}>
+                FM Surface
+              </Link>
+              <Link href="/privacy" className={styles.panelLink}>
+                Privacy Policy
+              </Link>
             </div>
           </aside>
         </section>
 
-        <section id="overview" className={styles.section}>
+        <section className={styles.proofRail} aria-label="Product proof points">
+          {proofSignals.map((signal) => (
+            <article key={signal.value} className={styles.proofCard}>
+              <p className={styles.proofValue}>{signal.value}</p>
+              <p className={styles.proofLabel}>{signal.label}</p>
+            </article>
+          ))}
+        </section>
+
+        <section className={styles.section}>
           <div className={styles.sectionHeader}>
+            <p className={styles.sectionEyebrow}>Direct Answer</p>
             <h2 className={styles.sectionTitle}>What is The Urban Radio?</h2>
             <p className={styles.answerLead}>
-              The Urban Radio is a cloud-first radio automation platform that gives operators a single web control
-              plane for playlists, scheduling, relay control, recording jobs, widgets, and hosted station operations.
-              It is designed to replace fragmented station workflows with one consistent operational surface.
+              {siteName} is a cloud-first radio automation platform for stations that want playlists, scheduling,
+              relays, recording, widgets, billing workflows, and Thai-ready outputs in one product. It gives radio
+              teams a web control plane instead of forcing daily operations through local desktop software.
             </p>
           </div>
 
-          <div className={styles.featureGrid}>
-            {featureCards.map((card) => (
-              <article key={card.title} className={styles.featureCard}>
-                <h3>{card.title}</h3>
-                <p>{card.description}</p>
+          <div className={styles.cardGrid}>
+            {outcomeCards.map((card) => (
+              <article key={card.title} className={styles.card}>
+                <h3 className={styles.cardTitle}>{card.title}</h3>
+                <p className={styles.cardText}>{card.description}</p>
               </article>
             ))}
           </div>
@@ -385,51 +434,119 @@ export default function HomePage() {
 
         <section className={styles.section}>
           <div className={styles.sectionHeader}>
-            <h2 className={styles.sectionTitle}>How does cloud radio automation work in The Urban Radio?</h2>
+            <p className={styles.sectionEyebrow}>Operational Benefit</p>
+            <h2 className={styles.sectionTitle}>How does The Urban Radio help stations operate faster?</h2>
             <p className={styles.answerLead}>
-              The Urban Radio separates the browser, control plane, and worker plane so each layer does one job well.
-              Operators manage station state in the web app, Functions validate and record intent, and automation
-              workers execute commands for relays, recordings, indexing, and queue refresh workflows.
+              The Urban Radio reduces handoffs by putting station provisioning, scheduling, relay control, recording,
+              and public outputs into one operating story. Instead of moving between desktop software, spreadsheets,
+              scripts, and separate web tools, teams manage the station from a platform that keeps state visible and
+              consistent.
             </p>
           </div>
 
-          <div className={styles.steps}>
-            {workflowSteps.map((step, index) => (
-              <article key={step.title} className={styles.stepCard}>
-                <span className={styles.stepNumber}>{index + 1}</span>
-                <h3>{step.title}</h3>
-                <p>{step.description}</p>
+          <div className={styles.cardGrid}>
+            {surfaceCards.map((card) => (
+              <article key={card.title} className={styles.card}>
+                <h3 className={styles.cardTitle}>{card.title}</h3>
+                <p className={styles.cardText}>{card.description}</p>
               </article>
             ))}
           </div>
         </section>
 
-        <section id="compare" className={styles.section}>
+        <section className={styles.section}>
           <div className={styles.sectionHeader}>
-            <h2 className={styles.sectionTitle}>
-              Why choose The Urban Radio instead of desktop radio automation software?
-            </h2>
+            <p className={styles.sectionEyebrow}>System Flow</p>
+            <h2 className={styles.sectionTitle}>How does The Urban Radio work?</h2>
             <p className={styles.answerLead}>
-              The Urban Radio is better suited to teams that need remote visibility, repeatable station provisioning,
-              hosted plan operations, and Thai-ready publishing. Desktop radio automation software often works for a
-              single local setup, but web-first operations need a control model that can be reviewed, shared, and
-              evolved without depending on one machine.
+              The browser manages intent, Firebase stores control-plane state, and Cloud Run workers execute long-lived
+              tasks. That separation keeps the landing experience fast while still supporting relay failover,
+              recording jobs, queue refresh workflows, exports, and future indexing paths for large, Thai-ready
+              libraries.
             </p>
           </div>
 
-          <div className={styles.comparisonWrap}>
-            <table className={styles.comparisonTable}>
+          <ol className={styles.stepGrid}>
+            {workflowSteps.map((step, index) => (
+              <li key={step.title} className={styles.stepCard}>
+                <span className={styles.stepIndex}>{index + 1}</span>
+                <h3 className={styles.cardTitle}>{step.title}</h3>
+                <p className={styles.cardText}>{step.description}</p>
+              </li>
+            ))}
+          </ol>
+        </section>
+
+        <section className={styles.section}>
+          <div className={styles.sectionHeader}>
+            <p className={styles.sectionEyebrow}>Buyer Fit</p>
+            <h2 className={styles.sectionTitle}>Who should use The Urban Radio?</h2>
+            <p className={styles.answerLead}>
+              The Urban Radio fits internet radio operators, FM simulcast teams, multi-station groups, and
+              broadcasters that need remote visibility, repeatable station provisioning, worker-driven automation, and
+              Thai-ready outputs. It is especially useful when a station has outgrown single-machine workflows and
+              needs a clearer cloud operating model.
+            </p>
+          </div>
+
+          <div className={styles.cardGrid}>
+            {audienceCards.map((card) => (
+              <article key={card.title} className={styles.card}>
+                <h3 className={styles.cardTitle}>{card.title}</h3>
+                <p className={styles.cardText}>{card.description}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className={styles.section}>
+          <div className={styles.sectionHeader}>
+            <p className={styles.sectionEyebrow}>Localization</p>
+            <h2 className={styles.sectionTitle}>Why is The Urban Radio stronger for Thai-ready radio operations?</h2>
+            <p className={styles.answerLead}>
+              The Urban Radio treats Thai as a product requirement. UTF-8-safe metadata, Thai-ready public outputs,
+              and Thai-aware indexing preparation belong inside the platform contract, which is important for stations
+              that cannot accept broken glyphs, encoding loss, or manual workaround chains in production workflows.
+            </p>
+          </div>
+
+          <div className={styles.cardGrid}>
+            {thaiCards.map((card) => (
+              <article key={card.title} className={styles.card}>
+                <h3 className={styles.cardTitle}>{card.title}</h3>
+                <p className={styles.cardText}>{card.description}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className={styles.section}>
+          <div className={styles.sectionHeader}>
+            <p className={styles.sectionEyebrow}>Competitive Context</p>
+            <h2 className={styles.sectionTitle}>
+              How does The Urban Radio compare with desktop radio automation software?
+            </h2>
+            <p className={styles.answerLead}>
+              The Urban Radio is designed for teams that need remote visibility, repeatable provisioning, worker-driven
+              relay and recording workflows, and public outputs from one web-first control plane. Desktop automation
+              software can work for one local setup, but it usually becomes harder to review, share, and evolve across
+              a broader station operation.
+            </p>
+          </div>
+
+          <div className={styles.compareWrap}>
+            <table className={styles.compareTable}>
               <thead>
                 <tr>
                   <th scope="col">Decision Area</th>
                   <th scope="col">Desktop Automation</th>
-                  <th scope="col">The Urban Radio</th>
+                  <th scope="col">{siteName}</th>
                 </tr>
               </thead>
               <tbody>
                 {comparisonRows.map((row) => (
                   <tr key={row.label}>
-                    <td className={styles.comparisonHighlight}>{row.label}</td>
+                    <td className={styles.compareHighlight}>{row.label}</td>
                     <td>{row.desktop}</td>
                     <td>{row.urban}</td>
                   </tr>
@@ -441,95 +558,33 @@ export default function HomePage() {
 
         <section className={styles.section}>
           <div className={styles.sectionHeader}>
-            <h2 className={styles.sectionTitle}>What can operators manage from one station dashboard?</h2>
+            <p className={styles.sectionEyebrow}>Evaluation Facts</p>
+            <h2 className={styles.sectionTitle}>What facts help buyers evaluate The Urban Radio quickly?</h2>
             <p className={styles.answerLead}>
-              Operators can use The Urban Radio to manage the core state that keeps a station moving: library totals,
-              playlists, schedule events, relays, recording jobs, playback preferences, worker commands, and hosted
-              plan context. That scope matters because fragmented operations create slow handoffs and hidden failure
-              points.
+              Buyers, search engines, and answer engines all respond better to clear product facts than vague claims.
+              The Urban Radio exposes a defined category, explicit system boundaries, and direct product scope so the
+              platform is easier to review, easier to quote, and easier to align with high-intent search queries.
             </p>
           </div>
 
-          <div className={styles.signalGrid}>
-            {controlPlaneCards.map((card) => (
-              <article key={card.title} className={styles.signalCard}>
-                <h3>{card.title}</h3>
-                <p>{card.description}</p>
-              </article>
+          <dl className={styles.factGrid}>
+            {evaluationFacts.map((fact) => (
+              <div key={fact.term} className={styles.factItem}>
+                <dt>{fact.term}</dt>
+                <dd>{fact.description}</dd>
+              </div>
             ))}
-          </div>
-        </section>
-
-        <section id="thai" className={styles.section}>
-          <div className={styles.sectionHeader}>
-            <h2 className={styles.sectionTitle}>How does The Urban Radio support Thai radio operations?</h2>
-            <p className={styles.answerLead}>
-              The Urban Radio treats Thai support as a product requirement, not a translation afterthought. The stack
-              is designed so Thai text, station metadata, widget payloads, dashboard content, and output-oriented
-              workflows can be implemented and verified as part of launch quality instead of patched in later.
-            </p>
-          </div>
-
-          <div className={styles.featureGrid}>
-            {thaiSupportCards.map((card) => (
-              <article key={card.title} className={styles.featureCard}>
-                <h3>{card.title}</h3>
-                <p>{card.description}</p>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <section className={styles.section}>
-          <div className={styles.sectionHeader}>
-            <h2 className={styles.sectionTitle}>Who is The Urban Radio for?</h2>
-            <p className={styles.answerLead}>
-              The Urban Radio is for teams that need a cloud radio automation platform rather than a single-machine
-              broadcast tool. It fits internet stations, FM simulcast operators, managed service providers, and
-              broadcasters that care about Thai-ready metadata, public outputs, and repeatable operational control.
-            </p>
-          </div>
-
-          <div className={styles.fitGrid}>
-            {audienceCards.map((card) => (
-              <article key={card.title} className={styles.fitCard}>
-                <h3>{card.title}</h3>
-                <p>{card.description}</p>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <section className={styles.section}>
-          <div className={styles.sectionHeader}>
-            <h2 className={styles.sectionTitle}>What makes this platform easy to cite and evaluate?</h2>
-            <p className={styles.answerLead}>
-              The Urban Radio publishes a direct product story with clean semantic HTML, structured FAQ answers, and
-              explicit platform facts. That matters for human evaluation and AI citation because answer engines need
-              clear, quotable passages and machine-readable product context instead of vague marketing fragments.
-            </p>
-            <p className={styles.sectionNote}>
-              Product facts below are intentionally specific so search engines, AI systems, and buyers can understand
-              the platform without guessing.
-            </p>
-          </div>
-
-          <div className={styles.signalGrid}>
-            {platformSignals.map((card) => (
-              <article key={card.title} className={styles.signalCard}>
-                <h3>{card.title}</h3>
-                <p>{card.description}</p>
-              </article>
-            ))}
-          </div>
+          </dl>
         </section>
 
         <section id="faq" className={styles.section}>
           <div className={styles.sectionHeader}>
+            <p className={styles.sectionEyebrow}>FAQ</p>
             <h2 className={styles.sectionTitle}>Frequently asked questions about The Urban Radio</h2>
             <p className={styles.answerLead}>
-              These answers are written to be direct, complete, and easy to quote because operators, search engines,
-              and AI assistants all look for concise explanations before they commit time to a platform evaluation.
+              These answers are written to match the questions buyers and answer engines ask most often when they are
+              comparing cloud radio automation software, remote station management products, and Thai-ready
+              broadcasting platforms.
             </p>
           </div>
 
@@ -544,31 +599,30 @@ export default function HomePage() {
         </section>
 
         <section className={styles.cta}>
-          <h2 className={styles.ctaTitle}>Run your next station from one cloud control plane.</h2>
+          <p className={styles.sectionEyebrow}>Get Started</p>
+          <h2 className={styles.ctaTitle}>Run the station from the web, not from one machine.</h2>
           <p className={styles.ctaLead}>
-            Start with FM provisioning, move into Cloud operations, and use the architecture docs to evaluate how
-            The Urban Radio handles scheduling, relays, recording workflows, public outputs, and Thai-ready station
-            publishing.
+            Start with <Link href="/fm" className={styles.ctaLink}>FM</Link> to provision a station, move into{" "}
+            <Link href="/cloud" className={styles.ctaLink}>Cloud</Link> to manage playlists, relays, recording, and
+            widgets, then review <Link href="/docs" className={styles.ctaLink}>Architecture</Link> and{" "}
+            <Link href="/privacy" className={styles.ctaLink}>Privacy</Link> before deployment.
           </p>
 
           <div className={styles.heroActions}>
             <Link href="/fm" className={styles.primaryAction}>
-              Provision A Station
+              Launch A Station
             </Link>
-            <Link href="/docs" className={styles.secondaryAction}>
-              Review The Docs
+            <Link href="/cloud" className={styles.secondaryAction}>
+              Open Cloud
             </Link>
           </div>
         </section>
 
         <footer className={styles.footer}>
-          <span>
-            {siteName} • {primaryKeyword} • Updated {updatedDateLabel}
-          </span>
-
+          <span>{siteName} landing page updated {updatedDateLabel}.</span>
           <div className={styles.footerLinks}>
-            <Link href="/privacy">Privacy</Link>
             <Link href="/docs">Docs</Link>
+            <Link href="/privacy">Privacy</Link>
             <Link href="/cloud">Cloud</Link>
             <Link href="/fm">FM</Link>
           </div>
