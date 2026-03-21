@@ -10,77 +10,91 @@ service cloud.firestore {
       return tenantId + "_" + request.auth.uid;
     }
 
-    function isTenantBillingAdmin(tenantId) {
+    function isTenantMember(tenantId) {
       return signedIn() &&
-        exists(/databases/$(database)/documents/tenantMemberships/$(tenantMembershipId(tenantId))) &&
+        exists(/databases/$(database)/documents/tenantMemberships/$(tenantMembershipId(tenantId)));
+    }
+
+    function tenantRole(tenantId) {
+      return get(/databases/$(database)/documents/tenantMemberships/$(tenantMembershipId(tenantId))).data.role;
+    }
+
+    function isTenantBillingAdmin(tenantId) {
+      return isTenantMember(tenantId) &&
         (
-          get(/databases/$(database)/documents/tenantMemberships/$(tenantMembershipId(tenantId))).data.role == "owner" ||
-          get(/databases/$(database)/documents/tenantMemberships/$(tenantMembershipId(tenantId))).data.role == "admin"
+          tenantRole(tenantId) == "owner" ||
+          tenantRole(tenantId) == "admin"
         );
     }
 
+    function isStationMember(stationId) {
+      return isTenantMember(
+        get(/databases/$(database)/documents/stations/$(stationId)).data.tenantId
+      );
+    }
+
     match /tenants/{tenantId} {
-      allow read: if signedIn();
+      allow read: if isTenantMember(tenantId);
       allow write: if false;
     }
 
     match /stations/{stationId} {
-      allow read: if signedIn();
+      allow read: if isTenantMember(resource.data.tenantId);
       allow write: if false;
     }
 
     match /workerCommands/{commandId} {
-      allow read: if signedIn();
+      allow read: if isStationMember(resource.data.stationId);
       allow write: if false;
     }
 
     match /workerStatuses/{statusId} {
-      allow read: if signedIn();
+      allow read: if isStationMember(resource.data.stationId);
       allow write: if false;
     }
 
     match /mediaAssets/{mediaAssetId} {
-      allow read: if signedIn();
+      allow read: if isStationMember(resource.data.stationId);
       allow write: if false;
     }
 
     match /stationSummaries/{stationId} {
-      allow read: if signedIn();
+      allow read: if isStationMember(resource.data.stationId);
       allow write: if false;
     }
 
     match /playbackSettings/{stationId} {
-      allow read: if signedIn();
+      allow read: if isStationMember(resource.data.stationId);
       allow write: if false;
     }
 
     match /playlists/{playlistId} {
-      allow read: if signedIn();
+      allow read: if isStationMember(resource.data.stationId);
       allow write: if false;
     }
 
     match /scheduleEvents/{scheduleEventId} {
-      allow read: if signedIn();
+      allow read: if isStationMember(resource.data.stationId);
       allow write: if false;
     }
 
     match /relays/{relayId} {
-      allow read: if signedIn();
+      allow read: if isStationMember(resource.data.stationId);
       allow write: if false;
     }
 
     match /recordingJobs/{recordingJobId} {
-      allow read: if signedIn();
+      allow read: if isStationMember(resource.data.stationId);
       allow write: if false;
     }
 
     match /reportJobs/{reportJobId} {
-      allow read: if signedIn();
+      allow read: if isStationMember(resource.data.stationId);
       allow write: if false;
     }
 
     match /widgetConfigs/{widgetConfigId} {
-      allow read: if signedIn();
+      allow read: if isStationMember(resource.data.stationId);
       allow write: if false;
     }
 
@@ -90,7 +104,7 @@ service cloud.firestore {
     }
 
     match /billingSubscriptions/{stationId} {
-      allow read: if isTenantBillingAdmin(get(/databases/$(database)/documents/stations/$(stationId)).data.tenantId);
+      allow read: if isTenantBillingAdmin(resource.data.tenantId);
       allow write: if false;
     }
 
@@ -104,7 +118,7 @@ service cloud.firestore {
     }
 
     match /auditLogs/{auditId} {
-      allow read: if signedIn();
+      allow read: if isTenantMember(resource.data.tenantId);
       allow write: if false;
     }
 

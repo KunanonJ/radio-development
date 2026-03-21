@@ -15,6 +15,7 @@ import type {
   PlaybackSettings,
   ProvisionStationInput,
   ProvisionStationResponse,
+  Station,
   UpdatePlaybackSettingsInput
 } from "@the-urban-radio/contracts";
 import { firebaseAuth, getFunctionsBaseUrl, waitForAuthReady } from "./firebase/client";
@@ -56,6 +57,17 @@ export const provisionStation = (input: ProvisionStationInput) =>
     method: "POST",
     body: JSON.stringify(input)
   });
+
+export const getStations = async (tenantId?: string) => {
+  const params = new URLSearchParams();
+  if (tenantId) {
+    params.set("tenantId", tenantId);
+  }
+
+  const path = params.size > 0 ? `stations?${params.toString()}` : "stations";
+  const response = await authedFetch<{ stations: Station[] }>(path);
+  return response.stations;
+};
 
 export const getDashboardSummary = (stationId: string) =>
   authedFetch<DashboardSummary>(`dashboardSummary?stationId=${encodeURIComponent(stationId)}`);

@@ -26,7 +26,10 @@ import {
 import {
   buildTenantMembership,
   buildTenantMembershipId,
+  getAccessibleTenantIds,
   getAuthenticatedUser,
+  listTenantMemberships,
+  requireTenantMembership,
   requireTenantRole
 } from "./auth";
 import {
@@ -61,8 +64,7 @@ import {
   validateCreatePlaylistInput,
   validateCreateRecordingJobInput,
   validateCreateRelayInput,
-  validateCreateScheduleEventInput
-  ,
+  validateCreateScheduleEventInput,
   validateUpdatePlaybackSettingsInput
 } from "./control-plane";
 import {
@@ -117,6 +119,9 @@ const getCollection = <T>(name: string, stationId: string, orderField = "created
     snapshot.docs.map((doc) => doc.data() as T)
   );
 
+const sortByCreatedAtDesc = <T extends { createdAt: string }>(items: T[]) =>
+  [...items].sort((left, right) => right.createdAt.localeCompare(left.createdAt));
+
 const withErrorHandling = (handler: (request: any, response: any) => Promise<void> | void) =>
   onRequest(async (request, response) => {
     try {
@@ -149,6 +154,79 @@ const createStationCommand = async (args: {
 
   await ref.set(command);
   return command;
+};
+
+const getStation = async (stationId: string) => {
+  const snapshot = await db.collection("stations").doc(stationId).get();
+  if (!snapshot.exists) {
+    throw new ProvisioningError("Station not found.", 404);
+  }
+
+  return snapshot.data() as Station;
+};
+
+const requireStationMembership = async (args: {
+  stationId: string;
+  userId: string;
+}) => {
+  const station = await getStation(args.stationId);
+  await requireTenantMembership({
+    tenantId: station.tenantId,
+    userId: args.userId
+  });
+
+  return station;
+};
+
+const requireStationRole = async (args: {
+  stationId: string;
+  userId: string;
+  allowedRoles: ("owner" | "admin" | "operator" | "viewer")[];
+}) => {
+  const station = await getStation(args.stationId);
+  await requireTenantRole({
+    tenantId: station.tenantId,
+    userId: args.userId,
+    allowedRoles: args.allowedRoles
+  });
+
+  return station;
+};
+
+const getStationsForTenantIds = async (tenantIds: string[]) => {
+  if (tenantIds.length === 0) {
+    return [] as Station[];
+  }
+
+  const stations = await Promise.all(
+    tenantIds.map((tenantId) =>
+      db
+        .collection("stations")
+        .where("tenantId", "==", tenantId)
+        .get()
+        .then((snapshot) => snapshot.docs.map((doc) => doc.data() as Station))
+    )
+  );
+
+  return sortByCreatedAtDesc(stations.flat());
+};
+
+const getAccessibleStations = async (args: {
+  userId: string;
+  tenantId?: string | null;
+}) => {
+  const memberships = await listTenantMemberships(args.userId);
+  const tenantIds = getAccessibleTenantIds(memberships);
+
+  if (args.tenantId) {
+    if (!tenantIds.includes(args.tenantId)) {
+      throw new ProvisioningError("You are not a member of this tenant.", 403);
+    }
+
+    return getStationsForTenantIds([args.tenantId]);
+  }
+
+  return getStationsForTenantIds(tenantIds);
 };
 
 const getStationLibrarySummary = async (stationId: string) => {
@@ -202,23 +280,18 @@ const getMediaAssetPage = async (args: {
   });
 };
 
-const getStationContext = async (stationId: string) => {
-  const stationSnapshot = await db.collection("stations").doc(stationId).get();
-  if (!stationSnapshot.exists) {
-    throw new ProvisioningError("Station not found.", 404);
-  }
-
-  const station = stationSnapshot.data() as Station;
+const getStationContext = async (stationOrId: string | Station) => {
+  const station = typeof stationOrId === "string" ? await getStation(stationOrId) : stationOrId;
   const [library, playbackSettings, playlists, scheduleEvents, relays, recordingJobs, commands, workerStatuses] =
     await Promise.all([
-      getStationLibrarySummary(stationId),
-      getPlaybackSettings(stationId),
-      getCollection<Playlist>("playlists", stationId),
-      getCollection<ScheduleEvent>("scheduleEvents", stationId, "startsAt"),
-      getCollection<Relay>("relays", stationId),
-      getCollection<RecordingJob>("recordingJobs", stationId),
-      getCollection<WorkerCommand>("workerCommands", stationId),
-      getCollection<WorkerStatus>("workerStatuses", stationId, "lastSeenAt")
+      getStationLibrarySummary(station.id),
+      getPlaybackSettings(station.id),
+      getCollection<Playlist>("playlists", station.id),
+      getCollection<ScheduleEvent>("scheduleEvents", station.id, "startsAt"),
+      getCollection<Relay>("relays", station.id),
+      getCollection<RecordingJob>("recordingJobs", station.id),
+      getCollection<WorkerCommand>("workerCommands", station.id),
+      getCollection<WorkerStatus>("workerStatuses", station.id, "lastSeenAt")
     ]);
 
   return {
@@ -323,49 +396,64 @@ export const provisionStation = withErrorHandling(async (request, response) => {
 
 export const stations = withErrorHandling(async (request, response) => {
   requireMethod(request, "GET");
-  await getAuthenticatedUser(request);
+  const authenticatedUser = await getAuthenticatedUser(request);
+  const tenantId = getOptionalQuery(request, "tenantId");
 
-  const tenantId = getRequiredQuery(request, "tenantId");
-  const snapshot = await db
-    .collection("stations")
-    .where("tenantId", "==", tenantId)
-    .orderBy("createdAt", "desc")
-    .get();
-
-  json(response, 200, { stations: snapshot.docs.map((doc) => doc.data()) });
+  json(response, 200, {
+    stations: await getAccessibleStations({
+      userId: authenticatedUser.uid,
+      tenantId
+    })
+  });
 });
 
 export const dashboardSummary = withErrorHandling(async (request, response) => {
   requireMethod(request, "GET");
-  await getAuthenticatedUser(request);
+  const authenticatedUser = await getAuthenticatedUser(request);
 
   const stationId = getRequiredQuery(request, "stationId");
-  const context = await getStationContext(stationId);
+  const station = await requireStationMembership({
+    stationId,
+    userId: authenticatedUser.uid
+  });
+  const context = await getStationContext(station);
   json(response, 200, buildDashboardSummary(context));
 });
 
 export const stationDetail = withErrorHandling(async (request, response) => {
   requireMethod(request, "GET");
-  await getAuthenticatedUser(request);
+  const authenticatedUser = await getAuthenticatedUser(request);
 
   const stationId = getRequiredQuery(request, "stationId");
-  const context = await getStationContext(stationId);
+  const station = await requireStationMembership({
+    stationId,
+    userId: authenticatedUser.uid
+  });
+  const context = await getStationContext(station);
   json(response, 200, buildStationView(context));
 });
 
 export const workerCommands = withErrorHandling(async (request, response) => {
   requireMethod(request, "GET");
-  await getAuthenticatedUser(request);
+  const authenticatedUser = await getAuthenticatedUser(request);
 
   const stationId = getRequiredQuery(request, "stationId");
+  await requireStationMembership({
+    stationId,
+    userId: authenticatedUser.uid
+  });
   json(response, 200, { commands: await getCollection<WorkerCommand>("workerCommands", stationId) });
 });
 
 export const workerStatuses = withErrorHandling(async (request, response) => {
   requireMethod(request, "GET");
-  await getAuthenticatedUser(request);
+  const authenticatedUser = await getAuthenticatedUser(request);
 
   const stationId = getRequiredQuery(request, "stationId");
+  await requireStationMembership({
+    stationId,
+    userId: authenticatedUser.uid
+  });
   json(response, 200, { statuses: await getCollection<WorkerStatus>("workerStatuses", stationId, "lastSeenAt") });
 });
 
@@ -374,13 +462,8 @@ export const playbackSettings = withErrorHandling(async (request, response) => {
 
   if (request.method === "GET") {
     const stationId = getRequiredQuery(request, "stationId");
-    const station = (await db.collection("stations").doc(stationId).get()).data() as Station | undefined;
-    if (!station) {
-      throw new ProvisioningError("Station not found.", 404);
-    }
-
-    await requireTenantRole({
-      tenantId: station.tenantId,
+    await requireStationRole({
+      stationId,
       userId: authenticatedUser.uid,
       allowedRoles: ["owner", "admin", "operator"]
     });
@@ -396,13 +479,8 @@ export const playbackSettings = withErrorHandling(async (request, response) => {
 
   requireMethod(request, "POST");
   const input = validateUpdatePlaybackSettingsInput(request.body);
-  const station = (await db.collection("stations").doc(input.stationId).get()).data() as Station | undefined;
-  if (!station) {
-    throw new ProvisioningError("Station not found.", 404);
-  }
-
-  await requireTenantRole({
-    tenantId: station.tenantId,
+  await requireStationRole({
+    stationId: input.stationId,
     userId: authenticatedUser.uid,
     allowedRoles: ["owner", "admin", "operator"]
   });
@@ -422,13 +500,8 @@ export const billingSummary = withErrorHandling(async (request, response) => {
   const authenticatedUser = await getAuthenticatedUser(request);
 
   const stationId = getRequiredQuery(request, "stationId");
-  const station = (await db.collection("stations").doc(stationId).get()).data() as Station | undefined;
-  if (!station) {
-    throw new ProvisioningError("Station not found.", 404);
-  }
-
-  await requireTenantRole({
-    tenantId: station.tenantId,
+  const station = await requireStationRole({
+    stationId,
     userId: authenticatedUser.uid,
     allowedRoles: ["owner", "admin"]
   });
@@ -445,13 +518,8 @@ export const createCheckoutSession = withErrorHandling(async (request, response)
     throw new ProvisioningError("stationId is required.", 400);
   }
 
-  const station = (await db.collection("stations").doc(stationId).get()).data() as Station | undefined;
-  if (!station) {
-    throw new ProvisioningError("Station not found.", 404);
-  }
-
-  await requireTenantRole({
-    tenantId: station.tenantId,
+  const station = await requireStationRole({
+    stationId,
     userId: authenticatedUser.uid,
     allowedRoles: ["owner", "admin"]
   });
@@ -542,13 +610,8 @@ export const createBillingPortalSession = withErrorHandling(async (request, resp
     throw new ProvisioningError("stationId is required.", 400);
   }
 
-  const station = (await db.collection("stations").doc(stationId).get()).data() as Station | undefined;
-  if (!station) {
-    throw new ProvisioningError("Station not found.", 404);
-  }
-
-  await requireTenantRole({
-    tenantId: station.tenantId,
+  const station = await requireStationRole({
+    stationId,
     userId: authenticatedUser.uid,
     allowedRoles: ["owner", "admin"]
   });
@@ -574,16 +637,21 @@ export const mediaAssets = withErrorHandling(async (request, response) => {
     const stationId = getRequiredQuery(request, "stationId");
     const limit = getPositiveLimit(request);
     const cursor = getOptionalQuery(request, "cursor");
+    await requireStationMembership({
+      stationId,
+      userId: user.uid
+    });
     json(response, 200, await getMediaAssetPage({ stationId, limit, cursor }));
     return;
   }
 
   requireMethod(request, "POST");
   const input = validateCreateMediaAssetInput(request.body);
-  const station = (await db.collection("stations").doc(input.stationId).get()).data() as Station | undefined;
-  if (!station) {
-    throw new ProvisioningError("Station not found.", 404);
-  }
+  const station = await requireStationRole({
+    stationId: input.stationId,
+    userId: user.uid,
+    allowedRoles: ["owner", "admin", "operator"]
+  });
 
   const ref = db.collection("mediaAssets").doc();
   const auditRef = db.collection("auditLogs").doc();
@@ -628,16 +696,21 @@ export const playlists = withErrorHandling(async (request, response) => {
 
   if (request.method === "GET") {
     const stationId = getRequiredQuery(request, "stationId");
+    await requireStationMembership({
+      stationId,
+      userId: user.uid
+    });
     json(response, 200, { playlists: await getCollection<Playlist>("playlists", stationId) });
     return;
   }
 
   requireMethod(request, "POST");
   const input = validateCreatePlaylistInput(request.body);
-  const station = (await db.collection("stations").doc(input.stationId).get()).data() as Station | undefined;
-  if (!station) {
-    throw new ProvisioningError("Station not found.", 404);
-  }
+  const station = await requireStationRole({
+    stationId: input.stationId,
+    userId: user.uid,
+    allowedRoles: ["owner", "admin", "operator"]
+  });
 
   const ref = db.collection("playlists").doc();
   const auditRef = db.collection("auditLogs").doc();
@@ -672,6 +745,10 @@ export const scheduleEvents = withErrorHandling(async (request, response) => {
 
   if (request.method === "GET") {
     const stationId = getRequiredQuery(request, "stationId");
+    await requireStationMembership({
+      stationId,
+      userId: user.uid
+    });
     json(response, 200, {
       scheduleEvents: await getCollection<ScheduleEvent>("scheduleEvents", stationId, "startsAt")
     });
@@ -680,10 +757,11 @@ export const scheduleEvents = withErrorHandling(async (request, response) => {
 
   requireMethod(request, "POST");
   const input = validateCreateScheduleEventInput(request.body);
-  const station = (await db.collection("stations").doc(input.stationId).get()).data() as Station | undefined;
-  if (!station) {
-    throw new ProvisioningError("Station not found.", 404);
-  }
+  const station = await requireStationRole({
+    stationId: input.stationId,
+    userId: user.uid,
+    allowedRoles: ["owner", "admin", "operator"]
+  });
 
   const ref = db.collection("scheduleEvents").doc();
   const auditRef = db.collection("auditLogs").doc();
@@ -712,16 +790,21 @@ export const relays = withErrorHandling(async (request, response) => {
 
   if (request.method === "GET") {
     const stationId = getRequiredQuery(request, "stationId");
+    await requireStationMembership({
+      stationId,
+      userId: user.uid
+    });
     json(response, 200, { relays: await getCollection<Relay>("relays", stationId) });
     return;
   }
 
   requireMethod(request, "POST");
   const input = validateCreateRelayInput(request.body);
-  const station = (await db.collection("stations").doc(input.stationId).get()).data() as Station | undefined;
-  if (!station) {
-    throw new ProvisioningError("Station not found.", 404);
-  }
+  const station = await requireStationRole({
+    stationId: input.stationId,
+    userId: user.uid,
+    allowedRoles: ["owner", "admin", "operator"]
+  });
 
   const ref = db.collection("relays").doc();
   const auditRef = db.collection("auditLogs").doc();
@@ -755,16 +838,21 @@ export const recordingJobs = withErrorHandling(async (request, response) => {
 
   if (request.method === "GET") {
     const stationId = getRequiredQuery(request, "stationId");
+    await requireStationMembership({
+      stationId,
+      userId: user.uid
+    });
     json(response, 200, { recordingJobs: await getCollection<RecordingJob>("recordingJobs", stationId) });
     return;
   }
 
   requireMethod(request, "POST");
   const input = validateCreateRecordingJobInput(request.body);
-  const station = (await db.collection("stations").doc(input.stationId).get()).data() as Station | undefined;
-  if (!station) {
-    throw new ProvisioningError("Station not found.", 404);
-  }
+  const station = await requireStationRole({
+    stationId: input.stationId,
+    userId: user.uid,
+    allowedRoles: ["owner", "admin", "operator"]
+  });
 
   const ref = db.collection("recordingJobs").doc();
   const reportRef = db.collection("reportJobs").doc();

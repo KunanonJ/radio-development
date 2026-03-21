@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { buildTenantMembership, getAuthenticatedUser, hasAllowedTenantRole } from "../src/auth";
+import {
+  buildTenantMembership,
+  getAccessibleTenantIds,
+  getAuthenticatedUser,
+  hasAllowedTenantRole
+} from "../src/auth";
 import { ProvisioningError } from "../src/provisioning";
 
 describe("getAuthenticatedUser", () => {
@@ -43,5 +48,36 @@ describe("getAuthenticatedUser", () => {
 
     expect(membership.id).toBe("tenant_1_user_1");
     expect(membership.role).toBe("owner");
+  });
+
+  it("deduplicates accessible tenant ids from memberships", () => {
+    const memberships = [
+      buildTenantMembership({
+        tenantId: "tenant_1",
+        userId: "user_1",
+        email: "owner@example.com",
+        role: "owner",
+        createdAt: "2026-03-20T00:00:00.000Z",
+        createdBy: "user_1"
+      }),
+      buildTenantMembership({
+        tenantId: "tenant_1",
+        userId: "user_1",
+        email: "owner@example.com",
+        role: "admin",
+        createdAt: "2026-03-20T00:01:00.000Z",
+        createdBy: "user_1"
+      }),
+      buildTenantMembership({
+        tenantId: "tenant_2",
+        userId: "user_1",
+        email: "owner@example.com",
+        role: "viewer",
+        createdAt: "2026-03-20T00:02:00.000Z",
+        createdBy: "user_1"
+      })
+    ];
+
+    expect(getAccessibleTenantIds(memberships)).toEqual(["tenant_1", "tenant_2"]);
   });
 });

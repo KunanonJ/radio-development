@@ -7,8 +7,6 @@
   --accent-soft: #f3c07c;
   --border: #dccfb7;
   --shadow: rgba(39, 27, 9, 0.12);
-  --font-body: "Sarabun", "Noto Sans Thai", sans-serif;
-  --font-display: "Space Grotesk", "Sarabun", sans-serif;
 }
 
 * {
@@ -21,7 +19,8 @@ body {
   padding: 0;
   background: radial-gradient(circle at top, #fff7eb 0%, #efe6d4 42%, #e7ddcb 100%);
   color: var(--foreground);
-  font-family: var(--font-body);
+  font-family: var(--font-body), "Noto Sans Thai", sans-serif;
+  line-height: 1.5;
 }
 
 a {
@@ -29,6 +28,20 @@ a {
   text-decoration: none;
 }
 
+img {
+  max-width: 100%;
+  height: auto;
+}
+
 main {
   min-height: 100vh;
+}
+
+::selection {
+  background: rgba(191, 91, 4, 0.16);
+}
+
+:focus-visible {
+  outline: 3px solid rgba(191, 91, 4, 0.35);
+  outline-offset: 3px;
 }

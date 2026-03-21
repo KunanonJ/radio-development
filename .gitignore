@@ -22,6 +22,7 @@ node_modules/
 coverage/
 tmp/
 *.tsbuildinfo
+functions/lib/
 
 # Local / env
 .env

@@ -11,8 +11,7 @@ import type {
 import { useEffect, useState, useTransition } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { AppShell, MetricGrid } from "@the-urban-radio/ui";
-import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
-import { firebaseAuth, firestore } from "../lib/firebase/client";
+import { firebaseAuth } from "../lib/firebase/client";
 import {
   createMediaAsset,
   createPlaylist,
@@ -22,6 +21,7 @@ import {
   getDashboardSummary,
   getMediaAssets,
   getPlaybackSettings,
+  getStations,
   getStationDetail,
   updatePlaybackSettings
 } from "../lib/control-plane-api";
@@ -40,7 +40,9 @@ export const CloudDashboard = () => {
   const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
-    return onAuthStateChanged(firebaseAuth, (user) => {
+    let active = true;
+
+    const unsubscribe = onAuthStateChanged(firebaseAuth, (user) => {
       if (!user) {
         setStations([]);
         setSelectedStationId("");
@@ -51,13 +53,45 @@ export const CloudDashboard = () => {
         return;
       }
 
-      const stationQuery = query(collection(firestore, "stations"), orderBy("createdAt", "desc"));
-      return onSnapshot(stationQuery, (snapshot) => {
-        const nextStations = snapshot.docs.map((doc) => doc.data() as Station);
-        setStations(nextStations);
-        setSelectedStationId((current) => current || nextStations[0]?.id || "");
+      startTransition(() => {
+        getStations()
+          .then((nextStations) => {
+            if (!active) {
+              return;
+            }
+
+            setStations(nextStations);
+            if (nextStations.length === 0) {
+              setSummary(null);
+              setDetail(null);
+              setMediaPage(null);
+              setPlaybackSettings(null);
+            }
+            setSelectedStationId((current) =>
+              nextStations.some((station) => station.id === current) ? current : nextStations[0]?.id ?? ""
+            );
+            setError("");
+          })
+          .catch((loadError) => {
+            if (!active) {
+              return;
+            }
+
+            setStations([]);
+            setSelectedStationId("");
+            setSummary(null);
+            setDetail(null);
+            setMediaPage(null);
+            setPlaybackSettings(null);
+            setError(loadError instanceof Error ? loadError.message : "Failed to load stations.");
+          });
       });
     });
+
+    return () => {
+      active = false;
+      unsubscribe();
+    };
   }, []);
 
   useEffect(() => {

@@ -68,20 +68,49 @@ export const hasAllowedTenantRole = (role: TenantRole, allowedRoles: TenantRole[
   return allowedRoles.includes(role);
 };
 
+export const getTenantMembership = async (args: {
+  tenantId: string;
+  userId: string;
+}) => {
+  const membershipId = buildTenantMembershipId(args.tenantId, args.userId);
+  const snapshot = await getDb().collection("tenantMemberships").doc(membershipId).get();
+  return snapshot.exists ? (snapshot.data() as TenantMembership) : null;
+};
+
+export const requireTenantMembership = async (args: {
+  tenantId: string;
+  userId: string;
+}) => {
+  const membership = await getTenantMembership(args);
+  if (!membership) {
+    throw new ProvisioningError("You are not a member of this tenant.", 403);
+  }
+
+  return membership;
+};
+
+export const listTenantMemberships = async (userId: string) => {
+  const snapshot = await getDb().collection("tenantMemberships").where("userId", "==", userId).get();
+  return snapshot.docs
+    .map((doc) => doc.data() as TenantMembership)
+    .sort((left, right) => right.createdAt.localeCompare(left.createdAt));
+};
+
+export const getAccessibleTenantIds = (memberships: TenantMembership[]) => {
+  return [...new Set(memberships.map((membership) => membership.tenantId))];
+};
+
 export const requireTenantRole = async (args: {
   tenantId: string;
   userId: string;
   allowedRoles: TenantRole[];
 }) => {
-  const membershipId = buildTenantMembershipId(args.tenantId, args.userId);
-  const snapshot = await getDb().collection("tenantMemberships").doc(membershipId).get();
-  if (!snapshot.exists) {
-    throw new ProvisioningError("You are not a member of this tenant.", 403);
-  }
-
-  const membership = snapshot.data() as TenantMembership;
+  const membership = await requireTenantMembership({
+    tenantId: args.tenantId,
+    userId: args.userId
+  });
   if (!hasAllowedTenantRole(membership.role, args.allowedRoles)) {
-    throw new ProvisioningError("Owner or admin access is required for billing.", 403);
+    throw new ProvisioningError("You do not have the required tenant role for this action.", 403);
   }
 
   return membership;
