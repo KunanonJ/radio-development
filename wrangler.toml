@@ -1,0 +1,20 @@
+# Cloudflare Pages + Pages Functions + D1 + R2 (100% Cloudflare stack).
+# https://developers.cloudflare.com/pages/functions/
+
+name = "sonic-bloom"
+compatibility_date = "2025-04-01"
+
+pages_build_output_dir = "dist"
+
+# Create remote DB: npx wrangler d1 create sonic-bloom-db
+# Then paste the returned database_id below (or use --remote with wrangler CLI).
+[[d1_databases]]
+binding = "DB"
+database_name = "sonic-bloom-db"
+database_id = "00000000-0000-0000-0000-000000000001"
+migrations_dir = "migrations"
+
+# Create bucket: npx wrangler r2 bucket create sonic-bloom-media
+[[r2_buckets]]
+binding = "MEDIA_BUCKET"
+bucket_name = "sonic-bloom-media"

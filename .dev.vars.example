@@ -1,0 +1,7 @@
+# Copy to .dev.vars for local Pages Functions secrets (not committed).
+# wrangler pages dev loads .dev.vars automatically.
+#
+# UAT / local API: run `npm run db:migrate:local` once, then `npm run pages:dev`
+# (Vite on 8080 proxies /api to wrangler on 8788 — see vite.config.ts).
+#
+# EXAMPLE_SECRET=dev-only-value
