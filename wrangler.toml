@@ -8,6 +8,8 @@
 
 # Must match the Cloudflare Pages project name (Workers & Pages → project settings).
 name = "homeseeker"
+# Targets this account (avoids wrong account when multiple are linked). Workers subdomain: urbanradio.workers.dev
+account_id = "8724aa41ebe346f0cbd1c62126fe8942"
 compatibility_date = "2025-04-01"
 
 pages_build_output_dir = "dist"
