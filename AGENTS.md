@@ -16,6 +16,7 @@ Vite + React + TypeScript SPA: a music library and playback UI. Marketing landin
 | Watch tests | `npm run test:watch` |
 | E2E (Playwright) | `npm run test:e2e` (config: `playwright.config.ts`; plan: `docs/TEST-PLAN.md`) |
 | Cloudflare Workers Builds (deploy checklist) | `docs/CLOUDFLARE_WORKERS_BUILDS.md` |
+| Next.js + Firebase migration (backlog, Firestore schema) | `docs/MIGRATION-NEXT-FIREBASE.md` |
 | List Pages projects (after `wrangler login`) | `npm run cf:pages:list` |
 | Deploy with optional slug override | Set **`CF_PAGES_PROJECT_NAME`** in CI, then `npm run deploy` (see `scripts/pages-deploy.mjs`) |
 | Manual Pages deploy (GitHub) | Actions → **Deploy Cloudflare Pages** — needs secret **`CLOUDFLARE_API_TOKEN`**; see `docs/CLOUDFLARE_WORKERS_BUILDS.md` §6 |
