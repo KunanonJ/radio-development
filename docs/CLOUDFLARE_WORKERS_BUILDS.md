@@ -16,7 +16,7 @@ Never use **`npx wrangler deploy`** (Workers). This project is **Pages** + **Pag
 ## 2. `wrangler.toml` must match the dashboard
 
 - **`name`** = Cloudflare project name for **`wrangler pages deploy`** (this repo: **`radio-development`**, aligned with the GitHub repo name and dashboard hint).
-- **`account_id`** = Your Cloudflare account ID (see Workers & Pages overview).
+- **Account** is **not** set in `wrangler.toml` for Pages — **`account_id` is invalid** there and deploy will fail validation. Use a token / linked Git project scoped to account **`8724aa41…`** (homeseeker) as needed.
 - Repo values are the source of truth for `wrangler pages deploy`.
 
 ## 3. `CLOUDFLARE_API_TOKEN` (fixes Authentication error `[10000]`)
