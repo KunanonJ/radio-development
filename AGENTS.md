@@ -18,6 +18,7 @@ Vite + React + TypeScript SPA: a music library and playback UI. Marketing landin
 | Cloudflare Workers Builds (deploy checklist) | `docs/CLOUDFLARE_WORKERS_BUILDS.md` |
 | List Pages projects (after `wrangler login`) | `npm run cf:pages:list` |
 | Deploy with optional slug override | Set **`CF_PAGES_PROJECT_NAME`** in CI, then `npm run deploy` (see `scripts/pages-deploy.mjs`) |
+| Manual Pages deploy (GitHub) | Actions → **Deploy Cloudflare Pages** — needs secret **`CLOUDFLARE_API_TOKEN`**; see `docs/CLOUDFLARE_WORKERS_BUILDS.md` §6 |
 | Full verify (lint + unit + E2E + build) | `npm run verify` |
 | Cloudflare Pages + Functions (local) | `npm run pages:dev` |
 | Cloudflare Pages deploy | `npm run pages:deploy` (requires `wrangler login`) |

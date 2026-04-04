@@ -63,3 +63,14 @@ Use the **`name`** column **exactly** in `wrangler.toml` (`name = "..."`).
 | `Authentication error [10000]` | Token missing **Cloudflare Pages → Edit** (see §3). Replace **`CLOUDFLARE_API_TOKEN`** in build env — not fixable by repo YAML alone. |
 | API path `/pages/projects/<wrong-name>` | Run **`npm run cf:pages:list`**; set **`name`** in `wrangler.toml` to that slug exactly. |
 | `glob@10.5.0` npm warning | Transitive (**Tailwind** → **sucrase**). Harmless until those packages bump `glob`; do not fail the build. |
+
+## 6. Alternative: deploy from GitHub Actions (if Cloudflare’s `CLOUDFLARE_API_TOKEN` cannot be fixed)
+
+Cloudflare’s build environment may inject or reuse a token that **never** gets **Pages → Edit**. You can deploy from **GitHub** instead:
+
+1. Create an API token (same as §3): **Account** → **Cloudflare Pages** → **Edit**, account **homeseeker**.
+2. In GitHub: **Settings** → **Secrets and variables** → **Actions** → **New repository secret** → name **`CLOUDFLARE_API_TOKEN`**, paste the token.
+3. Optional: **Variables** → **`CF_PAGES_PROJECT_NAME`** if the slug must differ from `wrangler.toml` **`name`**.
+4. **Actions** → **Deploy Cloudflare Pages** → **Run workflow** (`.github/workflows/deploy-cloudflare-pages.yml`).
+
+Then either fix the Cloudflare build token later or **clear the Deploy command** in Cloudflare (if the product allows publishing **`dist`** without Wrangler) so you are not running two deploy paths on every push.
