@@ -15,6 +15,7 @@ Vite + React + TypeScript SPA: a music library and playback UI. Marketing landin
 | Unit tests (Vitest) | `npm test` |
 | Watch tests | `npm run test:watch` |
 | E2E (Playwright) | `npm run test:e2e` (config: `playwright.config.ts`; plan: `docs/TEST-PLAN.md`) |
+| Cloudflare Workers Builds (deploy checklist) | `docs/CLOUDFLARE_WORKERS_BUILDS.md` |
 | Full verify (lint + unit + E2E + build) | `npm run verify` |
 | Cloudflare Pages + Functions (local) | `npm run pages:dev` |
 | Cloudflare Pages deploy | `npm run pages:deploy` (requires `wrangler login`) |
