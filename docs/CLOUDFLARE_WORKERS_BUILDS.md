@@ -8,6 +8,7 @@ Use this checklist when the Git-connected build runs **build** + **deploy** on C
 |------|--------|
 | **Build command** | `bun run build` or `npm run build` |
 | **Deploy command** | `bun run deploy` or `npm run deploy` or `npx wrangler pages deploy dist` |
+| **Override project slug (optional)** | Set **`CF_PAGES_PROJECT_NAME`** in build env (e.g. `radio-development`) — `npm run deploy` runs `scripts/pages-deploy.mjs` and passes **`--project-name`** when set. Otherwise **`name`** in `wrangler.toml` is used. |
 | **Non-production / preview deploy** | Same as production — **`bun run deploy`**. Do **not** use `npx wrangler versions upload` (Workers-only). |
 | **Output directory** | `dist` (Vite; matches `pages_build_output_dir` in `wrangler.toml`) |
 
