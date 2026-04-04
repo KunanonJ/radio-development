@@ -6,7 +6,8 @@
 #
 # Cloudflare Workers Builds: set Deploy command to `bun run deploy` (NOT `npx wrangler deploy`).
 
-name = "sonic-bloom"
+# Must match the Cloudflare Pages project name (Workers & Pages → project settings).
+name = "homeseeker"
 compatibility_date = "2025-04-01"
 
 pages_build_output_dir = "dist"
