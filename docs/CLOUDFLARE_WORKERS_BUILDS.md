@@ -74,3 +74,15 @@ Cloudflare’s build environment may inject or reuse a token that **never** gets
 4. **Actions** → **Deploy Cloudflare Pages** → **Run workflow** (`.github/workflows/deploy-cloudflare-pages.yml`).
 
 Then either fix the Cloudflare build token later or **clear the Deploy command** in Cloudflare (if the product allows publishing **`dist`** without Wrangler) so you are not running two deploy paths on every push.
+
+## 7. GitHub secret works but Cloudflare build still shows `[10000]`
+
+**Path B** only sets **`CLOUDFLARE_API_TOKEN`** in **GitHub**. **Workers & Pages → Build** on Cloudflare still runs on **every git push** and uses the token stored **in Cloudflare** (environment / variables for that project), which is often **still the old one** without **Pages → Edit**.
+
+You will keep seeing **Authentication error [10000]** in **Cloudflare** logs until one of these is true:
+
+1. **Same token in both places** — In Cloudflare: **Workers & Pages** → your project → **Settings** → **Variables** (or build env). Set **`CLOUDFLARE_API_TOKEN`** to the **exact same** API token you created for GitHub (must include **Account → Cloudflare Pages → Edit**). Save and redeploy.
+
+2. **Stop running Wrangler on Cloudflare** — In **Build** settings, **clear the Deploy command** (leave empty) **only if** your Cloudflare product can publish **`dist`** without `wrangler pages deploy`. If the UI requires a deploy step, you must do (1).
+
+3. **Ignore Cloudflare deploy failure** — If **GitHub Actions → Deploy Cloudflare Pages** is green and the site updates, the Cloudflare-side deploy step is redundant; fix (1) or (2) to silence the red Cloudflare build.
