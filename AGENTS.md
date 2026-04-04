@@ -18,11 +18,13 @@ Vite + React + TypeScript SPA: a music library and playback UI. Marketing landin
 | Full verify (lint + unit + E2E + build) | `npm run verify` |
 | Cloudflare Pages + Functions (local) | `npm run pages:dev` |
 | Cloudflare Pages deploy | `npm run pages:deploy` (requires `wrangler login`) |
+| Upload `dist/` only (e.g. CI after build) | `npm run pages:upload` |
 
 Path alias: `@/` → `src/` (see `vite.config.ts`, `tsconfig`).
 
 ## Cloudflare (hosting + API)
 
+- **Custom deploy command (Workers Builds / CI)**: use `npx wrangler pages deploy dist` or `npm run pages:upload` after `npm run build`. Never `npx wrangler deploy` — that is for **Workers** with a `main` script and will fail on this repo (`Missing entry-point`). Standard **Git-connected Pages** often need no deploy command; the platform uploads `dist` from the build output directory.
 - **Static app**: Vite `dist/` is the Pages build output (`wrangler.toml` → `pages_build_output_dir`).
 - **SPA routing**: `public/_redirects` copies to `dist` — `/*` → `/index.html` (200 rewrite) for React Router.
 - **Backend (edge)**: **Pages Functions** in `functions/` — only `/api/*` invokes Functions (`public/_routes.json` → `dist/_routes.json`) so static asset traffic stays cheap.

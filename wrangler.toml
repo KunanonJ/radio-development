@@ -1,5 +1,8 @@
 # Cloudflare Pages + Pages Functions + D1 + R2 (100% Cloudflare stack).
 # https://developers.cloudflare.com/pages/functions/
+#
+# Deploy: use `wrangler pages deploy dist` (or `npm run pages:upload` after a build).
+# Do NOT use `wrangler deploy` — that targets Workers and expects `main = "..."`, not this layout.
 
 name = "sonic-bloom"
 compatibility_date = "2025-04-01"
