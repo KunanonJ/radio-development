@@ -61,6 +61,7 @@ Use the **`name`** column **exactly** in `wrangler.toml` (`name = "..."`).
 |---------|------------|
 | `Missing entry-point` | Deploy command was `wrangler deploy` → switch to **`bun run deploy`**. |
 | `Authentication error [10000]` | Token missing **Cloudflare Pages → Edit** (see §3). Replace **`CLOUDFLARE_API_TOKEN`** in build env — not fixable by repo YAML alone. |
+| **Build token** … **deleted or rolled** | Workers Builds uses a **separate** token selected in **Worker Builds settings** (not only `CLOUDFLARE_API_TOKEN` in variables). Open **Workers & Pages** → **Settings** (account or project scope per your UI) → **Worker Builds** / **Build configuration** → **Build token** → choose a **new** API token (same **Pages → Edit** permissions) or re-authorize. Retry the deployment. |
 | API path `/pages/projects/<wrong-name>` | Run **`npm run cf:pages:list`**; set **`name`** in `wrangler.toml` to that slug exactly. |
 | `glob@10.5.0` npm warning | Transitive (**Tailwind** → **sucrase**). Harmless until those packages bump `glob`; do not fail the build. |
 

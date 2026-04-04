@@ -20,6 +20,7 @@ Vite + React + TypeScript SPA: a music library and playback UI. Marketing landin
 | Deploy with optional slug override | Set **`CF_PAGES_PROJECT_NAME`** in CI, then `npm run deploy` (see `scripts/pages-deploy.mjs`) |
 | Manual Pages deploy (GitHub) | Actions → **Deploy Cloudflare Pages** — needs secret **`CLOUDFLARE_API_TOKEN`**; see `docs/CLOUDFLARE_WORKERS_BUILDS.md` §6 |
 | Cloudflare build still `[10000]` after GitHub secret | GitHub and Cloudflare use **separate** tokens — set the same Pages-capable token in **Cloudflare project Variables** too; see **`docs/CLOUDFLARE_WORKERS_BUILDS.md` §7** |
+| **Build token deleted or rolled** (Workers Builds) | Update **Build token** in **Worker Builds** settings in the dashboard; see **`docs/CLOUDFLARE_WORKERS_BUILDS.md`** troubleshooting table. |
 | Full verify (lint + unit + E2E + build) | `npm run verify` |
 | Cloudflare Pages + Functions (local) | `npm run pages:dev` |
 | Cloudflare Pages deploy | `npm run pages:deploy` (requires `wrangler login`) |
