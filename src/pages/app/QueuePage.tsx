@@ -1,18 +1,19 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { usePlayerStore } from '@/lib/store';
-import { TrackRow } from '@/components/TrackRow';
-import { formatStartsAtClock, formatStartsIn, formatHMS } from '@/lib/format';
 import { getRemainingQueueSeconds } from '@/lib/queue-utils';
 import { ListMusic } from 'lucide-react';
+import { SortableQueueList } from '@/components/queue/SortableQueueList';
+import { formatHMS } from '@/lib/format';
 
-function QueueColumnHeaders() {
+function QueueColumnHeaders({ showDrag }: { showDrag: boolean }) {
   const { t } = useTranslation();
   return (
     <div
       className="flex items-center gap-4 px-4 py-2 border-b border-border bg-muted/20 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground"
       role="row"
     >
+      {showDrag && <div className="w-8 shrink-0" aria-hidden />}
       <div className="w-8 text-center shrink-0">{t('queue.headers.number')}</div>
       <div className="w-10 shrink-0" aria-hidden />
       <div className="flex-1 min-w-0">{t('queue.headers.title')}</div>
@@ -31,31 +32,20 @@ function QueueColumnHeaders() {
 
 export default function QueuePage() {
   const { t } = useTranslation();
-  const { queue, queueIndex, currentTrack, progress } = usePlayerStore();
+  const { queue, queueIndex, currentTrack, progress, shuffle } = usePlayerStore();
 
   const remainingTotal = useMemo(
     () => getRemainingQueueSeconds(queue, queueIndex, progress, currentTrack),
-    [queue, queueIndex, progress, currentTrack]
+    [queue, queueIndex, progress, currentTrack],
   );
-
-  const remainingCurrent =
-    currentTrack != null ? currentTrack.duration * (1 - progress) : 0;
-
-  const upNextWithStartOffset = useMemo(() => {
-    const list = queue.slice(queueIndex + 1);
-    let offset = remainingCurrent;
-    return list.map((tr) => {
-      const start = offset;
-      offset += tr.duration;
-      return { track: tr, startOffset: start };
-    });
-  }, [queue, queueIndex, remainingCurrent]);
 
   const trackCountLabel =
     queue.length === 1 ? t('queue.oneTrack', { count: 1 }) : t('queue.nTracks', { count: queue.length });
 
+  const showDrag = queue.length > 0 && !shuffle;
+
   return (
-    <div className="app-page">
+    <div className="app-page" data-testid="queue-page">
       <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 mb-6">
         <div className="flex items-center gap-3">
           <ListMusic className="w-6 h-6 text-primary shrink-0" />
@@ -73,39 +63,19 @@ export default function QueuePage() {
         </span>
       </div>
 
-      {currentTrack && (
-        <div className="mb-8">
-          <p className="text-xs uppercase tracking-widest text-muted-foreground mb-3">{t('queue.nowPlaying')}</p>
-          <div className="surface-2 border border-primary/20 rounded-xl overflow-hidden">
-            <QueueColumnHeaders />
-            <TrackRow track={currentTrack} index={0} startsAtClock={t('queue.headers.now')} />
-          </div>
-        </div>
-      )}
+      <p className="text-[11px] text-muted-foreground mb-3 max-w-[60ch]" data-testid="queue-reorder-hint">
+        {t('queue.reorderHint')}
+      </p>
 
-      <div className="mb-3">
-        <p className="text-xs uppercase tracking-widest text-muted-foreground">{t('queue.upNext')}</p>
-        <p className="text-[11px] text-muted-foreground/80 mt-1">{t('queue.upNextHint')}</p>
-      </div>
-      {upNextWithStartOffset.length > 0 ? (
-        <div className="surface-2 border border-border rounded-xl overflow-hidden">
-          <QueueColumnHeaders />
-          {upNextWithStartOffset.map(({ track: tr, startOffset }, i) => (
-            <TrackRow
-              key={`${tr.id}-${queueIndex + 1 + i}`}
-              track={tr}
-              index={i}
-              startsAtClock={formatStartsAtClock(startOffset)}
-              startsIn={formatStartsIn(startOffset)}
-            />
-          ))}
-        </div>
-      ) : (
+      {queue.length === 0 ? (
         <div className="surface-2 border border-border rounded-xl p-12 text-center">
           <ListMusic className="w-10 h-10 text-muted-foreground/30 mx-auto mb-3" />
-          <p className="text-muted-foreground">
-            {queue.length === 0 ? t('queue.empty') : t('queue.noUpNext')}
-          </p>
+          <p className="text-muted-foreground">{t('queue.empty')}</p>
+        </div>
+      ) : (
+        <div className="surface-2 border border-border rounded-xl overflow-hidden">
+          <QueueColumnHeaders showDrag={showDrag} />
+          <SortableQueueList queue={queue} queueIndex={queueIndex} progress={progress} currentTrack={currentTrack} />
         </div>
       )}
     </div>

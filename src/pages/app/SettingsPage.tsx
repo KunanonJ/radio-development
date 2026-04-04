@@ -188,7 +188,7 @@ export function SettingsIntegrations() {
   );
 }
 
-const UI_THEME_IDS = ['day', 'dark', 'midnight', 'oled'] as const;
+const UI_THEME_IDS = ['day', 'dark', 'midnight', 'oled', 'system'] as const;
 
 const ACCENT_IDS: UiAccent[] = ['green', 'cyan', 'violet', 'amber'];
 

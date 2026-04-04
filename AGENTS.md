@@ -14,7 +14,8 @@ Vite + React + TypeScript SPA: a music library and playback UI. Marketing landin
 | Lint | `npm run lint` |
 | Unit tests (Vitest) | `npm test` |
 | Watch tests | `npm run test:watch` |
-| E2E (Playwright) | `npx playwright test` (config: `playwright.config.ts`) |
+| E2E (Playwright) | `npm run test:e2e` (config: `playwright.config.ts`; plan: `docs/TEST-PLAN.md`) |
+| Full verify (lint + unit + E2E + build) | `npm run verify` |
 | Cloudflare Pages + Functions (local) | `npm run pages:dev` |
 | Cloudflare Pages deploy | `npm run pages:deploy` (requires `wrangler login`) |
 
@@ -58,3 +59,7 @@ Path alias: `@/` → `src/` (see `vite.config.ts`, `tsconfig`).
 ## Documentation
 
 - Root **`README.md`** is still a Lovable placeholder; update it when the project is described for humans. **Do not** add extra markdown docs unless the user asks.
+
+## Cursor / agent work rules
+
+- **`.cursor/rules/*.mdc`** — project work rules for Cursor (workflow + frontend patterns). They complement this file; keep them in sync when conventions change.

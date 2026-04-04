@@ -1,12 +1,22 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-export type UiTheme = 'day' | 'dark' | 'midnight' | 'oled';
+/** Concrete themes applied to `data-ui-theme`. */
+export type UiThemeResolved = 'day' | 'dark' | 'midnight' | 'oled';
+
+export type UiTheme = UiThemeResolved | 'system';
 
 export type UiAccent = 'green' | 'cyan' | 'violet' | 'amber';
 
+/** Maps OS light/dark to Day / Night when `theme === 'system'`. */
+export function resolveUiTheme(theme: UiTheme): UiThemeResolved {
+  if (theme !== 'system') return theme;
+  if (typeof window === 'undefined') return 'dark';
+  return window.matchMedia('(prefers-color-scheme: light)').matches ? 'day' : 'dark';
+}
+
 function applyThemeToDocument(theme: UiTheme) {
-  document.documentElement.setAttribute('data-ui-theme', theme);
+  document.documentElement.setAttribute('data-ui-theme', resolveUiTheme(theme));
 }
 
 function applyAccentToDocument(accent: UiAccent) {

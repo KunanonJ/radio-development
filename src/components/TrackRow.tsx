@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { Track } from '@/lib/types';
 import { formatDuration } from '@/lib/format';
 import { usePlayerStore } from '@/lib/store';
@@ -7,6 +8,8 @@ import { motion } from 'framer-motion';
 interface TrackRowProps {
   track: Track;
   index: number;
+  /** Prepended column (e.g. drag handle for queue reorder) */
+  leadingSlot?: ReactNode;
   showAlbum?: boolean;
   /** Queue page: wall-clock start (e.g. "2:34 PM") */
   startsAtClock?: string;
@@ -21,6 +24,7 @@ interface TrackRowProps {
 export function TrackRow({
   track,
   index,
+  leadingSlot,
   showAlbum = true,
   startsAtClock,
   startsIn,
@@ -36,11 +40,12 @@ export function TrackRow({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ delay: index * 0.02 }}
-      className={`group flex items-center gap-4 px-4 py-2.5 rounded-lg transition-colors ${selectionMode ? 'cursor-default' : 'cursor-pointer'} ${isActive ? 'bg-primary/10' : 'hover:bg-secondary'} ${selected ? 'ring-1 ring-primary/50 bg-primary/5' : ''}`}
+      className={`group flex items-center gap-4 px-4 py-2.5 rounded-lg transition-colors ${selectionMode ? 'cursor-default' : 'cursor-pointer'} ${isActive ? 'bg-primary/10' : 'hover:bg-secondary'} ${selected ? 'ring-1 ring-primary/50 bg-primary/5' : ''} ${leadingSlot ? 'pl-2' : ''}`}
       onDoubleClick={() => {
         if (!selectionMode) play(track);
       }}
     >
+      {leadingSlot != null && <div className="flex w-8 shrink-0 items-center justify-center">{leadingSlot}</div>}
       <div className="w-8 text-center flex-shrink-0">
         {selectionMode ? (
           <input

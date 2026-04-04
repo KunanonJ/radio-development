@@ -1,7 +1,9 @@
 import { create } from 'zustand';
+import { arrayMove } from '@dnd-kit/sortable';
 import { PlaybackState, Track } from './types';
 import { mockTracks } from './mock-data';
 import { setAutoResumePreference } from './playback-persist';
+import { newQueueIndexAfterMove } from './queue-reorder';
 
 export type PlaybackConnectionState = 'ok' | 'offline' | 'recovering' | 'failed';
 
@@ -26,6 +28,8 @@ interface PlayerStore extends PlaybackState {
   addToQueue: (track: Track) => void;
   playNext: (track: Track) => void;
   removeFromQueue: (index: number) => void;
+  /** Reorder queue; updates queueIndex so the same track stays current. No-op when shuffle is on. */
+  moveQueueItem: (fromIndex: number, toIndex: number) => void;
   setQueue: (tracks: Track[], startIndex?: number) => void;
   isFullscreenPlayer: boolean;
   setFullscreenPlayer: (v: boolean) => void;
@@ -248,6 +252,19 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
         }
       }
       return { queue, queueIndex, currentTrack, progress: index === s.queueIndex ? 0 : s.progress };
+    }),
+
+  moveQueueItem: (fromIndex, toIndex) =>
+    set((s) => {
+      if (s.shuffle) return s;
+      if (fromIndex === toIndex) return s;
+      if (fromIndex < 0 || toIndex < 0 || fromIndex >= s.queue.length || toIndex >= s.queue.length) {
+        return s;
+      }
+      const queue = arrayMove(s.queue, fromIndex, toIndex);
+      const queueIndex = newQueueIndexAfterMove(s.queueIndex, fromIndex, toIndex);
+      const currentTrack = queue[queueIndex] ?? s.currentTrack;
+      return { queue, queueIndex, currentTrack };
     }),
 
   setQueue: (tracks, startIndex = 0) => {

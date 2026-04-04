@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
-import { useMemo } from 'react';
+import { useMemo, useState, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { cn } from '@/lib/utils';
 import { useMergedTracks } from '@/lib/library';
 import { usePlayerStore } from '@/lib/store';
 import { useSpotScheduleStore } from '@/lib/spot-schedule-store';
@@ -14,11 +15,42 @@ import {
   Megaphone,
   Radio,
   CircleHelp,
+  LayoutList,
+  GanttChart,
 } from 'lucide-react';
 import { formatDuration } from '@/lib/format';
+import {
+  computeGanttBarLayout,
+  shiftGanttWindowAnchor,
+  type GanttScale,
+} from '@/lib/gantt-timeline';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
+import { QueueGanttTimeline } from '@/components/QueueGanttTimeline';
+
+type QueuePreviewView = 'list' | 'gantt';
 
 export default function HomePage() {
   const { t } = useTranslation();
+  const [queuePreviewView, setQueuePreviewView] = useState<QueuePreviewView>('list');
+  const [ganttScale, setGanttScale] = useState<GanttScale>('day');
+  const [ganttAnchorDate, setGanttAnchorDate] = useState(() => new Date());
+  const [ganttRefresh, setGanttRefresh] = useState(0);
+  const goGanttToday = useCallback(() => {
+    setGanttAnchorDate(new Date());
+    setGanttRefresh((n) => n + 1);
+  }, []);
+
+  useEffect(() => {
+    setGanttAnchorDate(new Date());
+  }, [ganttScale]);
+
+  const ganttNavPrev = useCallback(() => {
+    setGanttAnchorDate((a) => shiftGanttWindowAnchor(ganttScale, a, -1));
+  }, [ganttScale]);
+
+  const ganttNavNext = useCallback(() => {
+    setGanttAnchorDate((a) => shiftGanttWindowAnchor(ganttScale, a, 1));
+  }, [ganttScale]);
   const merged = useMergedTracks();
   const currentTrack = usePlayerStore((s) => s.currentTrack);
   const progress = usePlayerStore((s) => s.progress);
@@ -53,7 +85,36 @@ export default function HomePage() {
     return list;
   }, [rules.length, merged.length, t]);
 
-  const queuePreview = useMemo(() => queue.slice(queueIndex, queueIndex + 4), [queue, queueIndex]);
+  /** All tracks from the current position onward (matches “tracks ahead” count). */
+  const queuePreview = useMemo(() => queue.slice(queueIndex), [queue, queueIndex]);
+
+  const ganttSegments = useMemo(() => {
+    let offsetSec = 0;
+    const items = queuePreview.map((tr, i) => {
+      const durationSec = Math.max(
+        1,
+        i === 0 ? Math.round(tr.duration * (1 - progress)) : Math.round(tr.duration),
+      );
+      const startsInSec = offsetSec;
+      offsetSec += durationSec;
+      return { track: tr, queuePos: queueIndex + i, startsInSec, durationSec };
+    });
+    const totalSec = Math.max(1, offsetSec);
+    return { items, totalSec };
+  }, [queuePreview, queueIndex, progress]);
+
+  const ganttBarLayout = useMemo(() => {
+    void ganttRefresh;
+    return computeGanttBarLayout(
+      ganttScale,
+      new Date(),
+      ganttSegments.items.map((s) => ({ durationSec: s.durationSec })),
+      ganttSegments.totalSec,
+      { windowAnchorDate: ganttAnchorDate },
+    );
+  }, [ganttScale, ganttSegments, ganttRefresh, ganttAnchorDate]);
+
+  const tracksAheadCount = Math.max(0, queue.length - queueIndex);
 
   return (
     <div className="space-y-8 app-page-dashboard">
@@ -172,17 +233,66 @@ export default function HomePage() {
       </div>
 
       <div>
-        <div className="flex items-center justify-between gap-2 mb-3">
-          <h2 className="text-lg font-semibold text-foreground">{t('dashboard.queuePreview')}</h2>
-          <span className="text-xs text-muted-foreground">{t('dashboard.tracksInQueue', { count: queue.length })}</span>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-3">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-2 min-w-0">
+            <h2 className="text-lg font-semibold text-foreground">{t('dashboard.queuePreview')}</h2>
+            <ToggleGroup
+              type="single"
+              value={queuePreviewView}
+              onValueChange={(v) => v && setQueuePreviewView(v as QueuePreviewView)}
+              variant="outline"
+              size="sm"
+              className="shrink-0"
+              aria-label={t('dashboard.queuePreview')}
+            >
+              <ToggleGroupItem value="list" aria-label={t('dashboard.queueViewList')}>
+                <LayoutList className="w-4 h-4 sm:mr-1" />
+                <span className="hidden sm:inline">{t('dashboard.queueViewList')}</span>
+              </ToggleGroupItem>
+              <ToggleGroupItem value="gantt" aria-label={t('dashboard.queueViewGantt')}>
+                <GanttChart className="w-4 h-4 sm:mr-1" />
+                <span className="hidden sm:inline">{t('dashboard.queueViewGantt')}</span>
+              </ToggleGroupItem>
+            </ToggleGroup>
+          </div>
+          <span className="text-xs text-muted-foreground sm:text-right shrink-0">
+            {t('dashboard.tracksAheadInQueue', { count: tracksAheadCount })}
+          </span>
         </div>
-        <div className="surface-2 border border-border rounded-xl overflow-hidden">
+        <div
+          className={cn(
+            'surface-2 border border-border rounded-xl overflow-hidden',
+            queuePreview.length > 0 &&
+              (queuePreviewView === 'gantt' || queuePreviewView === 'list') &&
+              'flex min-h-0 flex-col max-h-[min(70vh,560px)]',
+          )}
+        >
           {queuePreview.length === 0 ? (
             <p className="p-6 text-sm text-muted-foreground text-center">{t('dashboard.nothingPlaying')}</p>
+          ) : queuePreviewView === 'list' ? (
+            <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
+              {queuePreview.map((tr, i) => (
+                <TrackRow key={`${tr.id}-${queueIndex + i}`} track={tr} index={queueIndex + i} />
+              ))}
+            </div>
           ) : (
-            queuePreview.map((tr, i) => (
-              <TrackRow key={`${tr.id}-${queueIndex + i}`} track={tr} index={queueIndex + i} />
-            ))
+            <div className="flex min-h-0 flex-1 flex-col p-0">
+              <p className="shrink-0 border-b border-border px-4 py-2 text-center text-[11px] text-muted-foreground tabular-nums sm:px-5">
+                {t('dashboard.ganttAxisQueued', { time: formatDuration(ganttSegments.totalSec) })}
+              </p>
+              <div className="min-h-0 flex-1 overflow-hidden">
+                <QueueGanttTimeline
+                  scale={ganttScale}
+                  onScaleChange={setGanttScale}
+                  onToday={goGanttToday}
+                  onPrev={ganttNavPrev}
+                  onNext={ganttNavNext}
+                  layout={ganttBarLayout}
+                  segments={ganttSegments.items}
+                  progress={progress}
+                />
+              </div>
+            </div>
           )}
         </div>
       </div>

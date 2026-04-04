@@ -1,7 +1,8 @@
 import { mockArtists, mockPlaylists } from '@/lib/mock-data';
 import { useCatalogArtists, useCatalogPlaylists } from '@/lib/catalog-queries';
-import { useMergedAlbums, useMergedTracks } from '@/lib/library';
-import { TrackRow } from '@/components/TrackRow';
+import { useMergedAlbums } from '@/lib/library';
+import { useSearchResults } from '@/hooks/use-search-results';
+import { SearchResultsTable } from '@/components/search/SearchResultsTable';
 import { AlbumCard } from '@/components/AlbumCard';
 import { ArtistCard } from '@/components/ArtistCard';
 import { PlaylistCard } from '@/components/PlaylistCard';
@@ -12,22 +13,25 @@ import { useTranslation } from 'react-i18next';
 export default function SearchPage() {
   const { t } = useTranslation();
   const [query, setQuery] = useState('');
-  const hasQuery = query.length > 0;
-  const allTracks = useMergedTracks();
+  const hasQuery = query.trim().length > 0;
   const allAlbums = useMergedAlbums();
   const { data: apiArtists } = useCatalogArtists();
   const { data: apiPlaylists } = useCatalogPlaylists();
   const artists = apiArtists && apiArtists.length > 0 ? apiArtists : mockArtists;
   const playlists = apiPlaylists && apiPlaylists.length > 0 ? apiPlaylists : mockPlaylists;
 
-  const filteredTracks = allTracks.filter(
-    (tr) =>
-      tr.title.toLowerCase().includes(query.toLowerCase()) ||
-      tr.artist.toLowerCase().includes(query.toLowerCase())
-  );
+  const unifiedHits = useSearchResults(query);
+
   const filteredAlbums = allAlbums.filter((a) => a.title.toLowerCase().includes(query.toLowerCase()));
   const filteredArtists = artists.filter((a) => a.name.toLowerCase().includes(query.toLowerCase()));
   const filteredPlaylists = playlists.filter((p) => p.title.toLowerCase().includes(query.toLowerCase()));
+
+  const noResults =
+    hasQuery &&
+    unifiedHits.length === 0 &&
+    filteredAlbums.length === 0 &&
+    filteredArtists.length === 0 &&
+    filteredPlaylists.length === 0;
 
   return (
     <div className="app-page space-y-8">
@@ -53,16 +57,13 @@ export default function SearchPage() {
 
       {hasQuery && (
         <>
-          {filteredTracks.length > 0 && (
-            <div>
-              <h2 className="text-lg font-semibold text-foreground mb-3">{t('search.sectionTracks')}</h2>
-              <div className="surface-2 border border-border rounded-xl overflow-hidden">
-                {filteredTracks.slice(0, 5).map((tr, i) => (
-                  <TrackRow key={tr.id} track={tr} index={i} />
-                ))}
-              </div>
-            </div>
+          {unifiedHits.length > 0 && (
+            <section className="space-y-3">
+              <h2 className="text-lg font-semibold text-foreground">{t('search.sectionAll')}</h2>
+              <SearchResultsTable hits={unifiedHits} />
+            </section>
           )}
+
           {filteredAlbums.length > 0 && (
             <div>
               <h2 className="text-lg font-semibold text-foreground mb-3">{t('search.sectionAlbums')}</h2>
@@ -93,7 +94,7 @@ export default function SearchPage() {
               </div>
             </div>
           )}
-          {filteredTracks.length === 0 && filteredAlbums.length === 0 && filteredArtists.length === 0 && filteredPlaylists.length === 0 && (
+          {noResults && (
             <div className="surface-2 border border-border rounded-xl p-12 text-center">
               <p className="text-muted-foreground">{t('search.noResults', { query })}</p>
             </div>
