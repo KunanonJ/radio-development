@@ -32,6 +32,10 @@ dist-ssr
 *.sln
 *.sw?
 
+# Firebase
+firebase-debug.log
+*-debug.log
+
 # Playwright
 /test-results/
 /playwright-report/

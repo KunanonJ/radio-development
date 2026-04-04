@@ -9,6 +9,8 @@ Vite + React + TypeScript SPA: a music library and playback UI. Marketing landin
 | Task | Command |
 |------|---------|
 | Dev server (port **8080**) | `npm run dev` |
+| Next.js app (migration; port **3000**) | `npm run next:dev` (`apps/sb-next`) — shell mirrors Vite `AppLayout` (sidebar, mobile sheet, ⌘K search overlay); player bar still TODO |
+| Firebase emulators (Auth, Firestore, Storage, UI) | `npm run emulators:start` (requires `firebase-tools` / `npx`) |
 | Production build | `npm run build` |
 | Preview build | `npm run preview` |
 | Lint | `npm run lint` |

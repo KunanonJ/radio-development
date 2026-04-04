@@ -2,6 +2,15 @@
   "name": "vite_react_shadcn_ts",
   "private": true,
   "version": "0.0.0",
+  "workspaces": [
+    "apps/sb-next"
+  ],
+  "overrides": {
+    "sb-next": {
+      "react": "18.3.1",
+      "react-dom": "18.3.1"
+    }
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/KunanonJ/radio-development.git"
@@ -13,6 +22,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "next:dev": "npm run dev --workspace=sb-next",
+    "next:build": "npm run build --workspace=sb-next",
+    "next:lint": "npm run lint --workspace=sb-next",
+    "emulators:start": "npx firebase emulators:start --only auth,firestore,storage,ui",
     "build": "vite build",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
