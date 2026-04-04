@@ -6,8 +6,8 @@
 #
 # Cloudflare Workers Builds: set Deploy command to `bun run deploy` (NOT `npx wrangler deploy`).
 
-# Must match the Cloudflare Pages project name (Workers & Pages → project settings).
-name = "homeseeker"
+# Must match the Cloudflare Pages / Workers project binding (dashboard may show a display name).
+name = "radio-development"
 # Targets this account (avoids wrong account when multiple are linked). Workers subdomain: urbanradio.workers.dev
 account_id = "8724aa41ebe346f0cbd1c62126fe8942"
 compatibility_date = "2025-04-01"

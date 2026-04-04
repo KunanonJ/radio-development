@@ -15,7 +15,7 @@ Never use **`npx wrangler deploy`** (Workers). This project is **Pages** + **Pag
 
 ## 2. `wrangler.toml` must match the dashboard
 
-- **`name`** = Cloudflare **Pages project name** (e.g. `homeseeker`).
+- **`name`** = Cloudflare project name for **`wrangler pages deploy`** (this repo: **`radio-development`**, aligned with the GitHub repo name and dashboard hint).
 - **`account_id`** = Your Cloudflare account ID (see Workers & Pages overview).
 - Repo values are the source of truth for `wrangler pages deploy`.
 
