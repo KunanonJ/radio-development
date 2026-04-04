@@ -16,6 +16,7 @@ Vite + React + TypeScript SPA: a music library and playback UI. Marketing landin
 | Watch tests | `npm run test:watch` |
 | E2E (Playwright) | `npm run test:e2e` (config: `playwright.config.ts`; plan: `docs/TEST-PLAN.md`) |
 | Cloudflare Workers Builds (deploy checklist) | `docs/CLOUDFLARE_WORKERS_BUILDS.md` |
+| List Pages projects (after `wrangler login`) | `npm run cf:pages:list` |
 | Full verify (lint + unit + E2E + build) | `npm run verify` |
 | Cloudflare Pages + Functions (local) | `npm run pages:dev` |
 | Cloudflare Pages deploy | `npm run pages:deploy` (requires `wrangler login`) |
@@ -32,7 +33,7 @@ Path alias: `@/` → `src/` (see `vite.config.ts`, `tsconfig`).
 - **Sample endpoint**: `GET /api/health` → `functions/api/health.ts`.
 - **Frontend API base**: `src/lib/api-base.ts` — optional `VITE_API_BASE_URL` for a non–same-origin API later; default is same-origin `/api`.
 - **Secrets (local)**: copy `.dev.vars.example` → `.dev.vars` for `wrangler pages dev` (gitignored).
-- **Dashboard**: **`name`** in `wrangler.toml` must match what Cloudflare expects for this repo (currently **`radio-development`**). Do **not** put **`account_id`** in `wrangler.toml` for Pages — **`wrangler pages deploy`** rejects it. Account comes from the linked project / **`CLOUDFLARE_API_TOKEN`**. The account Workers subdomain is **`urbanradio.workers.dev`** (Pages URLs use **`radio-development.pages.dev`** or a custom domain). Connect the Git repo, or deploy with a CI token that has **Account → Cloudflare Pages → Edit** (or use the “Edit Cloudflare Workers” token template, which includes Pages). If deploy fails with **Authentication error [10000]**, fix the token scopes or rotate `CLOUDFLARE_API_TOKEN` in the build environment.
+- **Dashboard**: **`name`** in `wrangler.toml` must match the **Pages project slug** (`npm run cf:pages:list` after `wrangler login`). Do **not** put **`account_id`** in `wrangler.toml` for Pages — **`wrangler pages deploy`** rejects it. Account comes from the linked project / **`CLOUDFLARE_API_TOKEN`**. The account Workers subdomain is **`urbanradio.workers.dev`**. If deploy fails with **Authentication error [10000]**, the **API token** must include **Account → Cloudflare Pages → Edit** (dashboard Super Admin does not apply to tokens); see **`docs/CLOUDFLARE_WORKERS_BUILDS.md`**.
 - **Cloudflare Access**: edge login (Zero Trust → Access) protects the hostname before the SPA loads; optional JWT enforcement on `/api/*` when `ACCESS_TEAM_DOMAIN` and `ACCESS_POLICY_AUD` are set on the Pages project. See **`CLOUDFLARE_ACCESS.md`**.
 - **App login (username/password)**: optional **`VITE_REQUIRE_AUTH=true`** in Vite env — requires a **Login** page before `/app`. Pages Functions use **`AUTH_JWT_SECRET`** (HS256 session JWT in `sb_session` cookie) and D1 table **`auth_users`** (`migrations/0003_auth_users.sql`). Demo user: **`demo` / `demo`**. Without `AUTH_JWT_SECRET`, the UI treats auth as not configured and still allows `/app` when `VITE_REQUIRE_AUTH` is true (see `auth.serverNotConfigured` copy).
 

@@ -6,8 +6,8 @@
 #
 # Cloudflare Workers Builds: set Deploy command to `bun run deploy` (NOT `npx wrangler deploy`).
 
-# Must match the Cloudflare Pages / Workers project binding (dashboard may show a display name).
-name = "radio-development"
+# Must match Workers & Pages → project slug (run `npm run cf:pages:list` after `wrangler login`).
+name = "homeseeker"
 # Pages: do not set account_id here — wrangler pages deploy rejects it (use API token scope / linked project).
 compatibility_date = "2025-04-01"
 

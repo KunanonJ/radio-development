@@ -27,6 +27,7 @@
     "pages:deploy": "npm run build && wrangler pages deploy dist",
     "pages:upload": "wrangler pages deploy dist",
     "deploy": "wrangler pages deploy dist",
+    "cf:pages:list": "wrangler pages project list",
     "db:seed:build": "node scripts/build-d1-seed.mjs",
     "db:migrate:local": "wrangler d1 migrations apply sonic-bloom-db --local",
     "db:migrate:remote": "wrangler d1 migrations apply sonic-bloom-db --remote"

@@ -15,22 +15,39 @@ Never use **`npx wrangler deploy`** (Workers). This project is **Pages** + **Pag
 
 ## 2. `wrangler.toml` must match the dashboard
 
-- **`name`** = Cloudflare project name for **`wrangler pages deploy`** (this repo: **`radio-development`**, aligned with the GitHub repo name and dashboard hint).
+- **`name`** = Cloudflare **Pages project slug** (must match the name in **`wrangler pages project list`** / dashboard URL). This repo uses **`homeseeker`** (sidebar name in your dashboard). If Cloudflare suggested `radio-development`, that only applies if the Pages project was **created** with that slug — otherwise deploy targets the wrong project or fails.
 - **Account** is **not** set in `wrangler.toml` for Pages — **`account_id` is invalid** there and deploy will fail validation. Use a token / linked Git project scoped to account **`8724aa41…`** (homeseeker) as needed.
 - Repo values are the source of truth for `wrangler pages deploy`.
 
 ## 3. `CLOUDFLARE_API_TOKEN` (fixes Authentication error `[10000]`)
 
-Workers Builds injects **`CLOUDFLARE_API_TOKEN`**. The token must be allowed to manage **Pages** for that account.
+**Important:** Dashboard roles (e.g. Super Administrator) do **not** apply to **API tokens**. A token can list your account in `wrangler whoami` but still **lack** **Cloudflare Pages** permissions — you get **`Authentication error [code: 10000]`** on `POST/GET .../pages/projects/...`.
 
-1. Cloudflare Dashboard → **My Profile** → **API Tokens** → **Create Token**.
-2. Use template **“Edit Cloudflare Workers”** (includes **Account → Cloudflare Pages → Edit**), or create custom with at least:
+### Create a token that can run `wrangler pages deploy`
+
+1. Cloudflare → **My Profile** → **API Tokens** → **Create Token** → **Create Custom Token**.
+2. **Permissions** (minimum):
    - **Account** → **Cloudflare Pages** → **Edit**
-   - Scope: account **`8724aa41ebe346f0cbd1c62126fe8942`** (or “All accounts” while testing).
-3. In **Workers & Pages** → your project → **Settings** → **Environment variables** (or Workers Builds secrets), set **`CLOUDFLARE_API_TOKEN`** to that token value.
-4. Redeploy.
+3. **Account Resources**:
+   - **Include** → **Specific account** → **homeseeker** (`8724aa41ebe346f0cbd1c62126fe8942`).
+4. Create token, copy the value once.
 
-If deploy still fails, rotate the token and confirm it is not expired and not restricted to the wrong account.
+Optional: template **“Edit Cloudflare Workers”** often includes Pages — open the template and **confirm** **Cloudflare Pages → Edit** appears before using it.
+
+### Put the token where Workers Builds reads it
+
+1. **Workers & Pages** → your project → **Settings** → **Environment variables** (or **Variables and Secrets** for builds).
+2. Set **`CLOUDFLARE_API_TOKEN`** = the new token (replace any old token that only had Workers or DNS scopes).
+3. Save and **redeploy**.
+
+### Verify project name locally (optional)
+
+```bash
+npx wrangler login
+npm run cf:pages:list
+```
+
+Use the **`name`** column **exactly** in `wrangler.toml` (`name = "..."`).
 
 ## 4. URLs
 
@@ -42,6 +59,6 @@ If deploy still fails, rotate the token and confirm it is not expired and not re
 | Symptom | Likely fix |
 |---------|------------|
 | `Missing entry-point` | Deploy command was `wrangler deploy` → switch to **`bun run deploy`**. |
-| `Authentication error [10000]` | Token scopes or wrong account → recreate token (Pages: Edit) and set **`CLOUDFLARE_API_TOKEN`**. |
-| API path `/pages/projects/<wrong-name>` | Align **`name`** in `wrangler.toml` with the Pages project name. |
+| `Authentication error [10000]` | Token missing **Cloudflare Pages → Edit** (see §3). Replace **`CLOUDFLARE_API_TOKEN`** in build env — not fixable by repo YAML alone. |
+| API path `/pages/projects/<wrong-name>` | Run **`npm run cf:pages:list`**; set **`name`** in `wrangler.toml` to that slug exactly. |
 | `glob@10.5.0` npm warning | Transitive (**Tailwind** → **sucrase**). Harmless until those packages bump `glob`; do not fail the build. |
