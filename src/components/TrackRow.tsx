@@ -3,13 +3,16 @@
 import type { ReactNode } from 'react';
 import { Track } from '@/lib/types';
 import { formatDuration } from '@/lib/format';
-import { usePlayerStore } from '@/lib/store';
-import { Play, Pause, MoreHorizontal } from 'lucide-react';
+import { isPlaybackEnded, usePlayerStore } from '@/lib/store';
+import { Play, Pause } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { TrackActionsMenu } from '@/components/track/TrackActionsMenu';
 
 interface TrackRowProps {
   track: Track;
   index: number;
+  /** Actual index in the playback queue when this row represents queued content. */
+  queuePosition?: number;
   /** Prepended column (e.g. drag handle for queue reorder) */
   leadingSlot?: ReactNode;
   showAlbum?: boolean;
@@ -26,6 +29,7 @@ interface TrackRowProps {
 export function TrackRow({
   track,
   index,
+  queuePosition,
   leadingSlot,
   showAlbum = true,
   startsAtClock,
@@ -34,18 +38,51 @@ export function TrackRow({
   selected,
   onToggleSelect,
 }: TrackRowProps) {
-  const { currentTrack, isPlaying, play, pause } = usePlayerStore();
-  const isActive = currentTrack?.id === track.id;
+  const queueIndex = usePlayerStore((s) => s.queueIndex);
+  const currentTrackId = usePlayerStore((s) => s.currentTrack?.id);
+  const isPlaying = usePlayerStore((s) => s.isPlaying);
+  const progress = usePlayerStore((s) => s.progress);
+  const play = usePlayerStore((s) => s.play);
+  const playAtQueueIndex = usePlayerStore((s) => s.playAtQueueIndex);
+  const togglePlay = usePlayerStore((s) => s.togglePlay);
+  const isActive = queuePosition != null ? queueIndex === queuePosition : currentTrackId === track.id;
+  const showActions = !selectionMode;
+  const startTrack = () => {
+    if (queuePosition != null) {
+      playAtQueueIndex(queuePosition);
+      return;
+    }
+    play(track);
+  };
+  const handlePlayButtonClick = () => {
+    if (isActive) {
+      togglePlay();
+      return;
+    }
+    startTrack();
+  };
+  const handleRowDoubleClick = () => {
+    if (selectionMode) return;
+    if (isActive) {
+      if (isPlaybackEnded(progress)) {
+        startTrack();
+      } else {
+        play();
+      }
+      return;
+    }
+    startTrack();
+  };
 
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ delay: index * 0.02 }}
+      data-testid="track-row"
+      data-active={isActive ? "true" : "false"}
       className={`group flex items-center gap-4 px-4 py-2.5 rounded-lg transition-colors ${selectionMode ? 'cursor-default' : 'cursor-pointer'} ${isActive ? 'bg-primary/10' : 'hover:bg-secondary'} ${selected ? 'ring-1 ring-primary/50 bg-primary/5' : ''} ${leadingSlot ? 'pl-2' : ''}`}
-      onDoubleClick={() => {
-        if (!selectionMode) play(track);
-      }}
+      onDoubleClick={handleRowDoubleClick}
     >
       {leadingSlot != null && <div className="flex w-8 shrink-0 items-center justify-center">{leadingSlot}</div>}
       <div className="w-8 text-center flex-shrink-0">
@@ -65,7 +102,12 @@ export function TrackRow({
             </span>
             <button
               type="button"
-              onClick={() => (isActive && isPlaying ? pause() : play(track))}
+              data-testid="track-row-play-button"
+              onClick={(event) => {
+                event.stopPropagation();
+                handlePlayButtonClick();
+              }}
+              onPointerDown={(event) => event.stopPropagation()}
               className="hidden group-hover:block"
             >
               {isActive && isPlaying ? <Pause className="w-4 h-4 text-primary mx-auto" /> : <Play className="w-4 h-4 text-foreground mx-auto" />}
@@ -103,9 +145,7 @@ export function TrackRow({
 
       <span className="text-sm text-muted-foreground font-mono w-12 text-right">{formatDuration(track.duration)}</span>
 
-      <button className="p-1 opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-foreground transition-all">
-        <MoreHorizontal className="w-4 h-4" />
-      </button>
+      {showActions ? <TrackActionsMenu track={track} queuePosition={queuePosition} /> : <div className="w-6 shrink-0" aria-hidden />}
     </motion.div>
   );
 }

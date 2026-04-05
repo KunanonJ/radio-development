@@ -64,6 +64,7 @@ function SortableQueueRow({
       <TrackRow
         track={track}
         index={index}
+        queuePosition={index}
         leadingSlot={
           !shuffle ? (
             <button

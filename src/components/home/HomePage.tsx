@@ -278,7 +278,12 @@ export default function HomePage() {
           ) : queuePreviewView === 'list' ? (
             <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
               {queuePreview.map((tr, i) => (
-                <TrackRow key={`${tr.id}-${queueIndex + i}`} track={tr} index={queueIndex + i} />
+                <TrackRow
+                  key={`${tr.id}-${queueIndex + i}`}
+                  track={tr}
+                  index={queueIndex + i}
+                  queuePosition={queueIndex + i}
+                />
               ))}
             </div>
           ) : (

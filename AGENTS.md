@@ -28,8 +28,17 @@ Next.js 15 (App Router) + React + TypeScript: a music library and playback UI. M
 | Cloudflare Pages local | `pages:dev` exits with a hint — use **`npm run dev`** for Next; Wrangler needs a static `out/` or `dist/` folder. |
 | Cloudflare Pages deploy | `npm run pages:deploy` (requires `wrangler login`; uploads **`out/`** if present, else **`dist/`**) |
 | Upload static output | `npm run pages:upload` or `npm run deploy` |
+| Firebase rules (Firestore indexes + rules) | `npx firebase deploy --only firestore:rules,firestore:indexes` |
+| Firebase Storage rules | `npx firebase deploy --only storage` (after Storage is enabled in console) |
 
 Path alias: `@/` → `src/` (see `tsconfig.json`).
+
+## Firebase (production)
+
+- **Project ID:** `the-urban-radio` (default in `.firebaserc`).
+- **Firestore (default database):** **asia-southeast3** (Bangkok — suitable for Thailand latency).
+- **Rules / indexes:** `firestore.rules`, `firestore.indexes.json`, `storage.rules` at repo root; deploy with Firebase CLI when logged in.
+- **Storage:** Open [Firebase Storage](https://console.firebase.google.com/project/the-urban-radio/storage) and complete **Get started** (choose security rules mode, then pick region — prefer **asia-southeast3** if offered for the default bucket). Then run `npx firebase deploy --only storage`.
 
 ## App structure
 

@@ -340,6 +340,15 @@
     "emptyFiltered": "ไม่มีแทร็กตรงตัวกรอง ลองค้นหาใหม่หรือเปลี่ยนแนวเพลง",
     "emptyLibrary": "ยังไม่มีแทร็กในคลัง"
   },
+  "trackActions": {
+    "openMenu": "เปิดเมนูการทำงานของ {{title}}",
+    "playNow": "เล่นทันที",
+    "playNext": "เล่นถัดไป",
+    "goToAlbum": "ไปที่อัลบั้ม",
+    "goToArtist": "ไปที่ศิลปิน",
+    "queuedTrack": "เพิ่ม “{{title}}” เข้าคิวแล้ว",
+    "willPlayNext": "“{{title}}” จะเล่นถัดไป"
+  },
   "albums": {
     "title": "อัลบั้ม",
     "count": "{{count}} อัลบั้ม"

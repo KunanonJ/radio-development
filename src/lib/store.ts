@@ -25,6 +25,7 @@ interface PlayerStore extends PlaybackState {
   toggleShuffle: () => void;
   toggleCrossfade: () => void;
   setCrossfadeDurationSec: (sec: number) => void;
+  playAtQueueIndex: (index: number) => void;
   addToQueue: (track: Track) => void;
   playNext: (track: Track) => void;
   removeFromQueue: (index: number) => void;
@@ -53,6 +54,13 @@ interface PlayerStore extends PlaybackState {
 
 function clamp01(n: number) {
   return Math.min(1, Math.max(0, n));
+}
+
+/** Treat progress at/above this as finished for resume vs restart (toggle, row actions). */
+export const PLAYBACK_ENDED_THRESHOLD = 0.999;
+
+export function isPlaybackEnded(progress: number) {
+  return progress >= PLAYBACK_ENDED_THRESHOLD;
 }
 
 function clampCrossfadeSec(n: number) {
@@ -133,6 +141,18 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
 
   handleTrackEnded: () => get().advanceAfterCurrentTrackEnd(0),
 
+  playAtQueueIndex: (index) => {
+    const { queue } = get();
+    if (index < 0 || index >= queue.length) return;
+    set({
+      currentTrack: queue[index],
+      isPlaying: true,
+      queueIndex: index,
+      progress: 0,
+      currentTrackStartedAtMs: Date.now(),
+    });
+  },
+
   play: (track) => {
     const q = get().queue;
     if (track) {
@@ -164,7 +184,7 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
 
   togglePlay: () =>
     set((s) => {
-      if (!s.isPlaying && s.progress >= 0.999 && s.currentTrack) {
+      if (!s.isPlaying && isPlaybackEnded(s.progress) && s.currentTrack) {
         return { isPlaying: true, progress: 0, currentTrackStartedAtMs: Date.now() };
       }
       return { isPlaying: !s.isPlaying };

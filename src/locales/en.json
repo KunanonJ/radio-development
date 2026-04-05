@@ -340,6 +340,15 @@
     "emptyFiltered": "No tracks match your filters. Try another search or genre.",
     "emptyLibrary": "No tracks in the library yet."
   },
+  "trackActions": {
+    "openMenu": "Open actions for {{title}}",
+    "playNow": "Play now",
+    "playNext": "Play next",
+    "goToAlbum": "Go to album",
+    "goToArtist": "Go to artist",
+    "queuedTrack": "Added “{{title}}” to queue",
+    "willPlayNext": "“{{title}}” will play next"
+  },
   "albums": {
     "title": "Albums",
     "count": "{{count}} albums"
