@@ -1,4 +1,6 @@
-import { Link } from 'react-router-dom';
+'use client';
+
+import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 import type { SearchHit } from '@/lib/search-hits';
 import { formatSpotRuleShort } from '@/lib/search-hits';
@@ -84,7 +86,7 @@ function SpotHitRow({ rule, index, variant }: { rule: SpotRule; index: number; v
         <div className="flex items-center gap-2 min-w-0">
           <span className="text-[10px] font-semibold uppercase tracking-wide text-primary shrink-0">{t('search.spotBadge')}</span>
           <Link
-            to="/app/spot-schedule"
+            href="/app/spot-schedule"
             className="text-sm font-medium text-foreground truncate hover:underline"
             onClick={(e) => e.stopPropagation()}
           >
@@ -101,7 +103,7 @@ function SpotHitRow({ rule, index, variant }: { rule: SpotRule; index: number; v
       <td className="w-14 px-2 py-2 align-middle text-right tabular-nums text-sm text-muted-foreground">{durationLabel}</td>
       <td className="w-9 px-1 py-2 align-middle">
         <Link
-          to="/app/spot-schedule"
+          href="/app/spot-schedule"
           className="inline-flex p-1 rounded opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-foreground"
           aria-label={t('search.openSpotSchedule')}
         >
@@ -145,7 +147,7 @@ export function SearchHitCompactRow({ hit, onPick }: { hit: SearchHit; onPick: (
   }
   return (
     <Link
-      to="/app/spot-schedule"
+      href="/app/spot-schedule"
       className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-secondary transition-colors"
       onClick={onPick}
     >

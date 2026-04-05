@@ -1,4 +1,3 @@
-/* eslint-disable react-refresh/only-export-components -- shadcn: FormField + helpers exported with Form */
 import * as React from "react";
 import * as LabelPrimitive from "@radix-ui/react-label";
 import { Slot } from "@radix-ui/react-slot";

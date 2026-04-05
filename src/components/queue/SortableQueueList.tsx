@@ -22,6 +22,10 @@ type RowStart =
   | { played: true }
   | { startsAtClock?: string; startsIn?: string };
 
+function isPastQueueRow(s: RowStart): s is { played: true } {
+  return 'played' in s && s.played === true;
+}
+
 function SortableQueueRow({
   id,
   track,
@@ -129,7 +133,6 @@ export function SortableQueueList({
         <div className="overflow-hidden" role="list" data-testid="queue-list">
           {queue.map((tr, i) => {
             const start = rowStarts[i];
-            const played = 'played' in start && start.played;
             return (
               <SortableQueueRow
                 key={`${tr.id}-${i}`}
@@ -137,8 +140,8 @@ export function SortableQueueList({
                 track={tr}
                 index={i}
                 shuffle={shuffle}
-                startsAtClock={played ? t('queue.played') : start.startsAtClock}
-                startsIn={played ? undefined : start.startsIn}
+                startsAtClock={isPastQueueRow(start) ? t('queue.played') : start.startsAtClock}
+                startsIn={isPastQueueRow(start) ? undefined : start.startsIn}
               />
             );
           })}

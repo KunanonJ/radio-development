@@ -1,4 +1,4 @@
-import { apiFetch, apiUrl } from '@/lib/api-base';
+import { apiFetch } from '@/lib/api-base';
 
 export interface CloudUploadResult {
   id: string;
@@ -10,14 +10,14 @@ export interface CloudUploadResult {
 
 /**
  * POSTs a file to Pages Functions `/api/upload` (Cloudflare edge).
- * Falls back to a local success payload when the API is unavailable (e.g. Vite dev without Wrangler).
+ * Falls back to a local success payload when the API is unavailable (e.g. `next dev` without Pages Functions).
  */
 export async function uploadFileToCloud(file: File): Promise<CloudUploadResult> {
   const form = new FormData();
   form.append('file', file);
 
   try {
-    const res = await apiFetch(apiUrl('/api/upload'), {
+    const res = await apiFetch('/api/upload', {
       method: 'POST',
       body: form,
     });

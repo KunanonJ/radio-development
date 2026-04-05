@@ -1,3 +1,5 @@
+'use client';
+
 import type { ReactNode } from 'react';
 import { Track } from '@/lib/types';
 import { formatDuration } from '@/lib/format';

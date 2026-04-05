@@ -57,7 +57,8 @@ export const mockTracks: Track[] = trackNames.map((title, i) => ({
   artistId: mockArtists[i % mockArtists.length].id,
   album: albumNames[i % albumNames.length],
   albumId: `al${(i % albumNames.length) + 1}`,
-  duration: 180 + Math.floor(Math.random() * 180),
+  /** Deterministic per index so SSR and client bundles match (no `Math.random()` here). */
+  duration: 180 + ((i * 73) % 180),
   artwork: artworks[i % artworks.length],
   source: (['local', 'plex', 'spotify'] as const)[i % 3],
   genre: mockArtists[i % mockArtists.length].genres[0],

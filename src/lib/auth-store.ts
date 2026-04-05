@@ -1,11 +1,11 @@
 import { create } from 'zustand';
-import { apiUrl } from '@/lib/api-base';
+import { apiFetch } from '@/lib/api-base';
 
 type AuthState = {
   username: string | null;
   /** True after first `/api/auth/me` check completes. */
   checked: boolean;
-  /** Server has no AUTH_JWT_SECRET — APIs are open; UI login is skipped when `VITE_REQUIRE_AUTH` is true. */
+  /** Server has no AUTH_JWT_SECRET — APIs are open; UI login is skipped when auth is required. */
   authNotConfigured: boolean;
   checkSession: () => Promise<void>;
   login: (username: string, password: string) => Promise<void>;
@@ -14,7 +14,8 @@ type AuthState = {
 
 /** When `true`, `/app` requires a successful login (set `AUTH_JWT_SECRET` + D1 user on the server). */
 export function isAuthRequired(): boolean {
-  return import.meta.env.VITE_REQUIRE_AUTH === 'true';
+  const v = process.env.NEXT_PUBLIC_REQUIRE_AUTH;
+  return v === 'true' || v === '1';
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
@@ -29,7 +30,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     }
 
     try {
-      const res = await fetch(apiUrl('/api/auth/me'), { credentials: 'same-origin' });
+      const res = await apiFetch('/api/auth/me');
       const data = (await res.json().catch(() => ({}))) as {
         authenticated?: boolean;
         authNotConfigured?: boolean;
@@ -51,10 +52,9 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   login: async (username, password) => {
-    const res = await fetch(apiUrl('/api/auth/login'), {
+    const res = await apiFetch('/api/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      credentials: 'same-origin',
       body: JSON.stringify({ username, password }),
     });
     const data = (await res.json().catch(() => ({}))) as { error?: string; user?: { username?: string } };
@@ -70,7 +70,7 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   logout: async () => {
     try {
-      await fetch(apiUrl('/api/auth/logout'), { method: 'POST', credentials: 'same-origin' });
+      await apiFetch('/api/auth/logout', { method: 'POST' });
     } catch {
       /* ignore */
     }

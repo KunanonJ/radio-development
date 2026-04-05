@@ -19,9 +19,10 @@ This document describes how the app is tested: unit/integration (Vitest), end-to
 
 | Variable / setting | Role |
 |--------------------|------|
-| `PLAYWRIGHT_BASE_URL` | Overrides default `http://localhost:8080` for E2E. |
-| `VITE_REQUIRE_AUTH` | If `true`, app may redirect unauthenticated users; default E2E assumes auth is **not** required (see smoke test). |
-| `webServer` in `playwright.config.ts` | Starts `npm run dev`; dev server must listen on port **8080** (see `vite.config.ts`). |
+| `PLAYWRIGHT_BASE_URL` | Overrides default `http://localhost:3330` for E2E (isolated from `npm run dev` on 3000). |
+| `PLAYWRIGHT_REUSE_SERVER` | If set, Playwright will not start `dev:e2e` and expects a server at `PLAYWRIGHT_BASE_URL`. |
+| `NEXT_PUBLIC_REQUIRE_AUTH` | If `true`, app may redirect unauthenticated users; default E2E assumes auth is **not** required (see smoke test). |
+| `webServer` in `playwright.config.ts` | Starts **`npm run dev:e2e`** (Next on port **3330**) so tests do not attach to whatever is already on 3000. |
 
 **Prerequisites for E2E (local / CI):**
 
@@ -46,7 +47,7 @@ This document describes how the app is tested: unit/integration (Vitest), end-to
 
 **Run:** `npm run test:e2e` (or `npm run test:e2e:ui` for interactive debugging).
 
-**Config:** `playwright.config.ts` — Chromium, traces/screenshots on failure, `baseURL` from env or `http://localhost:8080`.
+**Config:** `playwright.config.ts` — Chromium, traces/screenshots on failure, `baseURL` from env or `http://localhost:3330`.
 
 ### Suites and cases
 
@@ -69,7 +70,7 @@ Locale: queue title may be localized (e.g. Thai); tests scope headings to `queue
 
 - Full drag-and-drop **order verification** after drop (flaky without careful waits; unit tests cover `moveQueueItem`).
 - Real audio playback, OAuth, or API-backed flows until implemented.
-- Authenticated flows when `VITE_REQUIRE_AUTH=true` (add storageState / login fixture later).
+- Authenticated flows when `NEXT_PUBLIC_REQUIRE_AUTH=true` (add storageState / login fixture later).
 
 ## CI recommendations
 
@@ -104,7 +105,7 @@ Equivalent manual steps (all should exit 0):
 | 1 | `npm run lint` | No ESLint errors |
 | 2 | `npm test` | All Vitest files green |
 | 3 | `npm run test:e2e` | All Playwright specs green (starts dev server via config) |
-| 4 | `npm run build` | Vite production build succeeds |
+| 4 | `npm run build` | Next.js production build succeeds |
 
 ## When something fails (recovery plan)
 
@@ -115,10 +116,10 @@ Use this table to narrow and fix failures without guessing.
 | **Lint** | New code style / unused imports | Run `npm run lint` and fix reported files; match existing ESLint config. |
 | **Vitest** | Logic change, mock drift, or env | Open the failing `*.test.ts`; read the assertion and implementation; update test or code; re-run `npm test`. |
 | **E2E: browser missing** | Playwright not installed on machine/CI | Run `npx playwright install chromium` (CI: `npx playwright install --with-deps chromium`). |
-| **E2E: connection refused / timeout** | Wrong port or dev server not starting | Confirm `vite` serves **8080**; check `playwright.config.ts` `webServer` and `PLAYWRIGHT_BASE_URL`. |
+| **E2E: connection refused / timeout** | Wrong port or dev server not starting | E2E uses **3330** via `dev:e2e`; check `playwright.config.ts` `webServer` and `PLAYWRIGHT_BASE_URL`. |
 | **E2E: element not found** | UI/copy change or missing `data-testid` | Prefer adding or updating `data-testid` in components; avoid hard-coding English copy if i18n is used. |
-| **E2E: auth redirect** | `VITE_REQUIRE_AUTH=true` without session | Run E2E with auth disabled for smoke, or add a logged-in fixture / storage state (future work). |
-| **Build** | Type error or Vite plugin issue | Run `npm run build` locally; fix TypeScript and import errors first. |
+| **E2E: auth redirect** | `NEXT_PUBLIC_REQUIRE_AUTH=true` without session | Run E2E with auth disabled for smoke, or add a logged-in fixture / storage state (future work). |
+| **Build** | Type error or Next/webpack issue | Run `npm run build` locally; fix TypeScript and import errors first. |
 
 After fixes, re-run **`npm run verify`** until it passes.
 

@@ -34,7 +34,7 @@ If the site is already behind Access, browsers send the JWT automatically; direc
 
 ## 4. Local development
 
-- **`npm run dev`** (Vite on port 8080) does **not** go through Cloudflare Access.
+- **`npm run dev`** (Next.js on port 3000) does **not** go through Cloudflare Access.
 - **`npm run pages:dev`**: leave `ACCESS_*` unset in `.dev.vars` so APIs stay open, or use a **Cloudflare Tunnel** to a protected hostname if you need Access locally.
 
 ## 5. Service tokens (CI / monitors)

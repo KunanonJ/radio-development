@@ -1,3 +1,5 @@
+'use client';
+
 import { useCallback, useEffect, useRef } from 'react';
 import { usePlayerStore } from '@/lib/store';
 import { MAX_RECOVERY_ATTEMPTS, recoveryBackoffMs } from '@/lib/playback-recovery';

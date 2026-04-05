@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { apiFetch, apiUrl } from '@/lib/api-base';
+import { apiFetch } from '@/lib/api-base';
 import type { Album, Artist, Playlist, Track } from '@/lib/types';
 import { setApiCatalogTracks } from '@/lib/catalog-cache';
 
@@ -14,21 +14,21 @@ const catalogQueryOptions = {
 export type CatalogResponse = { tracks: Track[]; source?: string };
 
 export async function fetchCatalogTracks(): Promise<Track[]> {
-  const res = await apiFetch(apiUrl('/api/catalog'));
+  const res = await apiFetch('/api/catalog');
   if (!res.ok) throw new Error(`catalog ${res.status}`);
   const data: CatalogResponse = await res.json();
   return data.tracks ?? [];
 }
 
 export async function fetchCatalogAlbums(): Promise<Album[]> {
-  const res = await apiFetch(apiUrl('/api/catalog/albums'));
+  const res = await apiFetch('/api/catalog/albums');
   if (!res.ok) throw new Error(`albums ${res.status}`);
   const data = (await res.json()) as { albums: Album[] };
   return data.albums ?? [];
 }
 
 export async function fetchCatalogAlbum(id: string): Promise<Album | null> {
-  const res = await apiFetch(apiUrl(`/api/catalog/albums/${encodeURIComponent(id)}`));
+  const res = await apiFetch(`/api/catalog/albums/${encodeURIComponent(id)}`);
   if (res.status === 404) return null;
   if (!res.ok) throw new Error(`album ${res.status}`);
   const data = (await res.json()) as { album: Album };
@@ -36,14 +36,14 @@ export async function fetchCatalogAlbum(id: string): Promise<Album | null> {
 }
 
 export async function fetchCatalogPlaylists(): Promise<Playlist[]> {
-  const res = await apiFetch(apiUrl('/api/catalog/playlists'));
+  const res = await apiFetch('/api/catalog/playlists');
   if (!res.ok) throw new Error(`playlists ${res.status}`);
   const data = (await res.json()) as { playlists: Playlist[] };
   return data.playlists ?? [];
 }
 
 export async function fetchCatalogPlaylist(id: string): Promise<Playlist | null> {
-  const res = await apiFetch(apiUrl(`/api/catalog/playlists/${encodeURIComponent(id)}`));
+  const res = await apiFetch(`/api/catalog/playlists/${encodeURIComponent(id)}`);
   if (res.status === 404) return null;
   if (!res.ok) throw new Error(`playlist ${res.status}`);
   const data = (await res.json()) as { playlist: Playlist };
@@ -51,7 +51,7 @@ export async function fetchCatalogPlaylist(id: string): Promise<Playlist | null>
 }
 
 export async function fetchCatalogArtists(): Promise<Artist[]> {
-  const res = await apiFetch(apiUrl('/api/catalog/artists'));
+  const res = await apiFetch('/api/catalog/artists');
   if (!res.ok) throw new Error(`artists ${res.status}`);
   const data = (await res.json()) as { artists: Artist[] };
   return data.artists ?? [];
@@ -63,7 +63,7 @@ export type CatalogArtistDetail = Artist & {
 };
 
 export async function fetchCatalogArtist(id: string): Promise<CatalogArtistDetail | null> {
-  const res = await apiFetch(apiUrl(`/api/catalog/artists/${encodeURIComponent(id)}`));
+  const res = await apiFetch(`/api/catalog/artists/${encodeURIComponent(id)}`);
   if (res.status === 404) return null;
   if (!res.ok) throw new Error(`artist ${res.status}`);
   const data = (await res.json()) as { artist: CatalogArtistDetail };

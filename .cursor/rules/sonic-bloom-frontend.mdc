@@ -8,22 +8,22 @@ alwaysApply: false
 
 ## Imports and types
 
-- Use path alias **`@/`** for `src/` (see `vite.config.ts`).
+- Use path alias **`@/`** for `src/` (see `tsconfig.json`).
 - Domain types live in **`src/lib/types.ts`**.
 
 ## State and data
 
 - **Player, queue, global UI** → Zustand **`usePlayerStore`** (`src/lib/store.ts`).
-- TanStack Query is wired in `App.tsx` but unused; only adopt it when adding real API calls.
+- TanStack Query is wired in app providers but may be unused until real API calls exist.
 
 ## UI structure
 
 - **shadcn/Radix** primitives: extend **`src/components/ui/`** sparingly; feature UI in **`src/components/`**.
-- **Styling**: Tailwind + CSS variables in **`src/index.css`** (`glass`, `surface-*`, sidebar/player vars — match existing patterns).
+- **Styling**: Tailwind + CSS variables in **`src/app/globals.css`** (`glass`, `surface-*`, sidebar/player vars — match existing patterns).
 
 ## Routing
 
-- Register routes in **`src/App.tsx`**; keep **`AppSidebar`** links in sync with `/app` children.
+- Register routes as **`src/app/**/page.tsx`** segments; keep **`AppSidebar`** links in sync with `/app` children.
 
 ## Tests and selectors
 

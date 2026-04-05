@@ -1,3 +1,5 @@
+'use client';
+
 import { usePlayerStore } from '@/lib/store';
 import { formatDuration } from '@/lib/format';
 import { X, Play, Pause, SkipBack, SkipForward, Repeat, Repeat1, Shuffle, Volume2, VolumeX, ListMusic } from 'lucide-react';
@@ -7,10 +9,10 @@ export function NowPlayingFullscreen() {
   const {
     currentTrack, isPlaying, progress, volume, isMuted, repeat, shuffle,
     togglePlay, next, previous, seek, setVolume, toggleMute, toggleRepeat, toggleShuffle,
-    setFullscreenPlayer, queue, queueIndex,
+    setFullscreenPlayer, queue, queueIndex, isFullscreenPlayer,
   } = usePlayerStore();
 
-  if (!currentTrack) return null;
+  if (!isFullscreenPlayer || !currentTrack) return null;
 
   const currentTime = Math.floor(progress * currentTrack.duration);
 

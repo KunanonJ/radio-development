@@ -1,10 +1,12 @@
+'use client';
+
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { usePlayerStore } from '@/lib/store';
 import { useMergedAlbums, useMergedTracks } from '@/lib/library';
 import { useSearchResults } from '@/hooks/use-search-results';
 import { SearchHitCompactRow } from '@/components/search/SearchHitRow';
 import { Search, X } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 
@@ -13,7 +15,7 @@ const TOP_RESULTS_LIMIT = 5;
 export function GlobalSearch() {
   const { t } = useTranslation();
   const { isSearchOpen, setSearchOpen } = usePlayerStore();
-  const navigate = useNavigate();
+  const router = useRouter();
   const [query, setQuery] = useState('');
   const mergedTracks = useMergedTracks();
   const mergedAlbums = useMergedAlbums();
@@ -38,7 +40,7 @@ export function GlobalSearch() {
   }, [isSearchOpen]);
 
   const go = (path: string) => {
-    navigate(path);
+    router.push(path);
     setSearchOpen(false);
   };
 

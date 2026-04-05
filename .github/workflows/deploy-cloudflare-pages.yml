@@ -1,6 +1,9 @@
 # Manual deploy when Cloudflare Workers Builds fails with Authentication error [10000]:
 # add GitHub secret CLOUDFLARE_API_TOKEN (Account → Cloudflare Pages → Edit for homeseeker).
 # Run: Actions → "Deploy Cloudflare Pages" → Run workflow.
+#
+# `npm run deploy` uploads `out/` or `dist/`. Default `next build` only produces `.next/`;
+# add a static export or adapter before this workflow can deploy, or use Git-connected Pages with a custom build.
 
 name: Deploy Cloudflare Pages
 

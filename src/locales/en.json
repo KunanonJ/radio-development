@@ -55,7 +55,7 @@
     "backHome": "Back to home",
     "notRequired": "Password login is not enabled for this build.",
     "goToApp": "Go to app",
-    "serverNotConfigured": "The server has no AUTH_JWT_SECRET. Add it (and run the auth migration) to enable login, or disable VITE_REQUIRE_AUTH for local dev."
+    "serverNotConfigured": "The server has no AUTH_JWT_SECRET. Add it (and run the auth migration) to enable login, or disable NEXT_PUBLIC_REQUIRE_AUTH for local dev."
   },
   "player": {
     "crossfadeTitle": "Crossfade (requires both tracks to have audio URLs; disabled while shuffle is on)"

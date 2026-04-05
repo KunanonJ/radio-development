@@ -1,12 +1,16 @@
+'use client';
+
+import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
+import { useHydrated } from '@/hooks/use-hydrated';
 import { usePlayerStore } from '@/lib/store';
 import { formatDuration } from '@/lib/format';
 import { Play, Pause, SkipBack, SkipForward, Repeat, Repeat1, Shuffle, Volume2, VolumeX, Maximize2, ListMusic, Waves } from 'lucide-react';
-import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
 export function PlayerBar() {
   const { t } = useTranslation();
+  const hydrated = useHydrated();
   const {
     currentTrack, isPlaying, progress, volume, isMuted, repeat, shuffle,
     crossfadeEnabled,
@@ -16,7 +20,8 @@ export function PlayerBar() {
 
   if (!currentTrack) return null;
 
-  const currentTime = Math.floor(progress * currentTrack.duration);
+  const safeProgress = hydrated ? progress : 0;
+  const currentTime = Math.floor(safeProgress * currentTrack.duration);
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 flex flex-col pb-[env(safe-area-inset-bottom,0px)] surface-2 border-t border-border">
@@ -36,7 +41,7 @@ export function PlayerBar() {
           <div className="min-w-0 flex-1">
             <p className="text-xs sm:text-sm font-medium truncate text-foreground">{currentTrack.title}</p>
             <Link
-              to={`/app/artist/${currentTrack.artistId}`}
+              href={`/app/artist/${currentTrack.artistId}`}
               className="text-[11px] sm:text-xs text-muted-foreground hover:text-foreground transition-colors truncate block"
             >
               {currentTrack.artist}
@@ -104,7 +109,7 @@ export function PlayerBar() {
               }}
               role="presentation"
             >
-              <div className="h-full bg-foreground rounded-full relative" style={{ width: `${progress * 100}%` }}>
+              <div className="h-full bg-foreground rounded-full relative" style={{ width: `${safeProgress * 100}%` }}>
                 <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-foreground rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-md" />
               </div>
             </div>
@@ -115,7 +120,7 @@ export function PlayerBar() {
         {/* Right controls */}
         <div className="flex items-center gap-2 sm:gap-3 shrink-0 md:w-[200px] lg:w-[220px] xl:w-[240px] justify-end">
           <Link
-            to="/app/queue"
+            href="/app/queue"
             className="p-2 sm:p-1.5 text-muted-foreground hover:text-foreground transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
           >
             <ListMusic className="w-4 h-4" />

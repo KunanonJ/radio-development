@@ -5,33 +5,27 @@ import th from '@/locales/th.json';
 
 export const LOCALE_STORAGE_KEY = 'sonic-bloom-locale';
 
-function getInitialLng(): string {
-  try {
-    const s = localStorage.getItem(LOCALE_STORAGE_KEY);
-    if (s === 'en' || s === 'th') return s;
-  } catch {
-    /* ignore */
-  }
-  return 'th';
+if (!i18n.isInitialized) {
+  void i18n.use(initReactI18next).init({
+    resources: {
+      en: { translation: en },
+      th: { translation: th },
+    },
+    lng: 'en',
+    fallbackLng: 'en',
+    interpolation: { escapeValue: false },
+    react: { useSuspense: false },
+  });
 }
 
-void i18n.use(initReactI18next).init({
-  resources: {
-    en: { translation: en },
-    th: { translation: th },
-  },
-  lng: getInitialLng(),
-  fallbackLng: 'en',
-  interpolation: { escapeValue: false },
-  react: { useSuspense: false },
-});
-
-i18n.on('languageChanged', (lng) => {
-  try {
-    localStorage.setItem(LOCALE_STORAGE_KEY, lng);
-  } catch {
-    /* ignore */
-  }
-});
+if (typeof window !== 'undefined') {
+  i18n.on('languageChanged', (lng) => {
+    try {
+      localStorage.setItem(LOCALE_STORAGE_KEY, lng.startsWith('th') ? 'th' : 'en');
+    } catch {
+      /* ignore */
+    }
+  });
+}
 
 export default i18n;

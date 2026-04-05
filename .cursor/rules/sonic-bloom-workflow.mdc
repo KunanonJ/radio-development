@@ -16,7 +16,7 @@ Run **`npm run verify`** (lint → Vitest → Playwright E2E → production buil
 
 | Task | Command |
 |------|---------|
-| Dev (port **8080**) | `npm run dev` |
+| Dev (port **3000**) | `npm run dev` |
 | Lint | `npm run lint` |
 | Unit tests | `npm test` |
 | E2E | `npm run test:e2e` |
