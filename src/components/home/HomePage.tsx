@@ -190,28 +190,6 @@ export default function HomePage() {
           <p className="text-2xl font-bold text-foreground">{t('dashboard.libraryTracks', { count: merged.length })}</p>
         </div>
 
-        <div className="surface-2 border border-border rounded-xl p-5 space-y-2">
-          <div className="flex items-center gap-2 text-primary">
-            <Megaphone className="w-5 h-5" />
-            <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-              {t('dashboard.spotsTitle')}
-            </h2>
-          </div>
-          {rules.length === 0 ? (
-            <p className="text-sm text-muted-foreground">{t('dashboard.spotsNone')}</p>
-          ) : (
-            <>
-              <p className="text-lg font-medium text-foreground">
-                {t('dashboard.spotsSummary', { enabled: enabledRules.length, total: rules.length })}
-              </p>
-              <p className="text-sm text-muted-foreground">
-                {earliestBreak
-                  ? t('dashboard.nextBreakAt', { time: earliestBreak.toLocaleString() })
-                  : t('dashboard.noBreakScheduled')}
-              </p>
-            </>
-          )}
-        </div>
       </div>
 
       <div className="flex flex-wrap gap-2">
@@ -238,72 +216,97 @@ export default function HomePage() {
         </Button>
       </div>
 
-      <div>
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-3">
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-2 min-w-0">
-            <h2 className="text-lg font-semibold text-foreground">{t('dashboard.queuePreview')}</h2>
-            <ToggleGroup
-              type="single"
-              value={queuePreviewView}
-              onValueChange={(v) => v && setQueuePreviewView(v as QueuePreviewView)}
-              variant="outline"
-              size="sm"
-              className="shrink-0"
-              aria-label={t('dashboard.queuePreview')}
-            >
-              <ToggleGroupItem value="list" aria-label={t('dashboard.queueViewList')}>
-                <LayoutList className="w-4 h-4 sm:mr-1" />
-                <span className="hidden sm:inline">{t('dashboard.queueViewList')}</span>
-              </ToggleGroupItem>
-              <ToggleGroupItem value="gantt" aria-label={t('dashboard.queueViewGantt')}>
-                <GanttChart className="w-4 h-4 sm:mr-1" />
-                <span className="hidden sm:inline">{t('dashboard.queueViewGantt')}</span>
-              </ToggleGroupItem>
-            </ToggleGroup>
+      <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_320px] xl:items-start">
+        <div>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-3">
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-2 min-w-0">
+              <h2 className="text-lg font-semibold text-foreground">{t('dashboard.queuePreview')}</h2>
+              <ToggleGroup
+                type="single"
+                value={queuePreviewView}
+                onValueChange={(v) => v && setQueuePreviewView(v as QueuePreviewView)}
+                variant="outline"
+                size="sm"
+                className="shrink-0"
+                aria-label={t('dashboard.queuePreview')}
+              >
+                <ToggleGroupItem value="list" aria-label={t('dashboard.queueViewList')}>
+                  <LayoutList className="w-4 h-4 sm:mr-1" />
+                  <span className="hidden sm:inline">{t('dashboard.queueViewList')}</span>
+                </ToggleGroupItem>
+                <ToggleGroupItem value="gantt" aria-label={t('dashboard.queueViewGantt')}>
+                  <GanttChart className="w-4 h-4 sm:mr-1" />
+                  <span className="hidden sm:inline">{t('dashboard.queueViewGantt')}</span>
+                </ToggleGroupItem>
+              </ToggleGroup>
+            </div>
+            <span className="text-xs text-muted-foreground sm:text-right shrink-0">
+              {t('dashboard.tracksAheadInQueue', { count: tracksAheadCount })}
+            </span>
           </div>
-          <span className="text-xs text-muted-foreground sm:text-right shrink-0">
-            {t('dashboard.tracksAheadInQueue', { count: tracksAheadCount })}
-          </span>
-        </div>
-        <div
-          className={cn(
-            'surface-2 border border-border rounded-xl overflow-hidden',
-            queuePreview.length > 0 &&
-              (queuePreviewView === 'gantt' || queuePreviewView === 'list') &&
-              'flex min-h-0 flex-col max-h-[min(70vh,560px)]',
-          )}
-        >
-          {queuePreview.length === 0 ? (
-            <p className="p-6 text-sm text-muted-foreground text-center">{t('dashboard.nothingPlaying')}</p>
-          ) : queuePreviewView === 'list' ? (
-            <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
-              {queuePreview.map((tr, i) => (
-                <TrackRow
-                  key={`${tr.id}-${queueIndex + i}`}
-                  track={tr}
-                  index={queueIndex + i}
-                  queuePosition={queueIndex + i}
-                />
-              ))}
-            </div>
-          ) : (
-            <div className="flex min-h-0 flex-1 flex-col p-0">
-              <p className="shrink-0 border-b border-border px-4 py-2 text-center text-[11px] text-muted-foreground tabular-nums sm:px-5">
-                {t('dashboard.ganttAxisQueued', { time: formatDuration(ganttSegments.totalSec) })}
-              </p>
-              <div className="min-h-0 flex-1 overflow-hidden">
-                <QueueGanttTimeline
-                  scale={ganttScale}
-                  onScaleChange={setGanttScale}
-                  onToday={goGanttToday}
-                  onPrev={ganttNavPrev}
-                  onNext={ganttNavNext}
-                  layout={ganttBarLayout}
-                  segments={ganttSegments.items}
-                  progress={progress}
-                />
+          <div
+            className={cn(
+              'surface-2 border border-border rounded-xl overflow-hidden',
+              queuePreview.length > 0 &&
+                (queuePreviewView === 'gantt' || queuePreviewView === 'list') &&
+                'flex min-h-0 flex-col max-h-[min(70vh,560px)]',
+            )}
+          >
+            {queuePreview.length === 0 ? (
+              <p className="p-6 text-sm text-muted-foreground text-center">{t('dashboard.nothingPlaying')}</p>
+            ) : queuePreviewView === 'list' ? (
+              <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
+                {queuePreview.map((tr, i) => (
+                  <TrackRow
+                    key={`${tr.id}-${queueIndex + i}`}
+                    track={tr}
+                    index={queueIndex + i}
+                    queuePosition={queueIndex + i}
+                  />
+                ))}
               </div>
-            </div>
+            ) : (
+              <div className="flex min-h-0 flex-1 flex-col p-0">
+                <p className="shrink-0 border-b border-border px-4 py-2 text-center text-[11px] text-muted-foreground tabular-nums sm:px-5">
+                  {t('dashboard.ganttAxisQueued', { time: formatDuration(ganttSegments.totalSec) })}
+                </p>
+                <div className="min-h-0 flex-1 overflow-hidden">
+                  <QueueGanttTimeline
+                    scale={ganttScale}
+                    onScaleChange={setGanttScale}
+                    onToday={goGanttToday}
+                    onPrev={ganttNavPrev}
+                    onNext={ganttNavNext}
+                    layout={ganttBarLayout}
+                    segments={ganttSegments.items}
+                    progress={progress}
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="surface-2 border border-border rounded-xl p-5 space-y-2">
+          <div className="flex items-center gap-2 text-primary">
+            <Megaphone className="w-5 h-5" />
+            <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+              {t('dashboard.spotsTitle')}
+            </h2>
+          </div>
+          {rules.length === 0 ? (
+            <p className="text-sm text-muted-foreground">{t('dashboard.spotsNone')}</p>
+          ) : (
+            <>
+              <p className="text-lg font-medium text-foreground">
+                {t('dashboard.spotsSummary', { enabled: enabledRules.length, total: rules.length })}
+              </p>
+              <p className="text-sm text-muted-foreground">
+                {earliestBreak
+                  ? t('dashboard.nextBreakAt', { time: earliestBreak.toLocaleString() })
+                  : t('dashboard.noBreakScheduled')}
+              </p>
+            </>
           )}
         </div>
       </div>

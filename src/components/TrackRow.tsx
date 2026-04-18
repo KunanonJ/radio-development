@@ -73,6 +73,18 @@ export function TrackRow({
     }
     startTrack();
   };
+  const handleRowClick = () => {
+    if (selectionMode) return;
+    if (isActive) {
+      if (isPlaybackEnded(progress)) {
+        startTrack();
+      } else {
+        play();
+      }
+      return;
+    }
+    startTrack();
+  };
 
   return (
     <motion.div
@@ -82,6 +94,7 @@ export function TrackRow({
       data-testid="track-row"
       data-active={isActive ? "true" : "false"}
       className={`group flex items-center gap-4 px-4 py-2.5 rounded-lg transition-colors ${selectionMode ? 'cursor-default' : 'cursor-pointer'} ${isActive ? 'bg-primary/10' : 'hover:bg-secondary'} ${selected ? 'ring-1 ring-primary/50 bg-primary/5' : ''} ${leadingSlot ? 'pl-2' : ''}`}
+      onClick={handleRowClick}
       onDoubleClick={handleRowDoubleClick}
     >
       {leadingSlot != null && <div className="flex w-8 shrink-0 items-center justify-center">{leadingSlot}</div>}

@@ -28,8 +28,8 @@ Next.js 15 (App Router) + React + TypeScript: a music library and playback UI. M
 | Cloudflare Pages local | `pages:dev` exits with a hint — use **`npm run dev`** for Next; Wrangler needs a static `out/` or `dist/` folder. |
 | Cloudflare Pages deploy | `npm run pages:deploy` (requires `wrangler login`; uploads **`out/`** if present, else **`dist/`**) |
 | Upload static output | `npm run pages:upload` or `npm run deploy` |
-| Firebase rules (Firestore indexes + rules) | `npx firebase deploy --only firestore:rules,firestore:indexes` |
-| Firebase Storage rules | `npx firebase deploy --only storage` (after Storage is enabled in console) |
+| Firebase rules (Firestore indexes + rules) | `npm run deploy:firebase` (or `npx firebase deploy --only firestore:rules,firestore:indexes`) |
+| Firebase Storage rules | `npm run deploy:firebase:storage` after Storage is enabled in console |
 
 Path alias: `@/` → `src/` (see `tsconfig.json`).
 
@@ -39,6 +39,7 @@ Path alias: `@/` → `src/` (see `tsconfig.json`).
 - **Firestore (default database):** **asia-southeast3** (Bangkok — suitable for Thailand latency).
 - **Rules / indexes:** `firestore.rules`, `firestore.indexes.json`, `storage.rules` at repo root; deploy with Firebase CLI when logged in.
 - **Storage:** Open [Firebase Storage](https://console.firebase.google.com/project/the-urban-radio/storage) and complete **Get started** (choose security rules mode, then pick region — prefer **asia-southeast3** if offered for the default bucket). Then run `npx firebase deploy --only storage`.
+- **App Hosting (Next.js):** Backend **`urban-radio-web`** in **`asia-southeast1`** (closest [supported region](https://firebase.google.com/docs/app-hosting/about-app-hosting#locations) to Thailand; Firebase App Hosting has no Bangkok region). Live domain: [urban-radio-web--the-urban-radio.asia-southeast1.hosted.app](https://urban-radio-web--the-urban-radio.asia-southeast1.hosted.app). Deploy from this repo: `npm run deploy:apphosting` (uploads source → Cloud Build). Track builds/rollouts in [App Hosting console](https://console.firebase.google.com/project/the-urban-radio/apphosting). Optional: connect GitHub (**urban-radio-web** → *Settings* → *Deployment*) on repo `KunanonJ/radio-development` for automatic rollouts on push. Config files: root `apphosting.yaml`, `firebase.json` → `apphosting`.
 
 ## App structure
 

@@ -180,74 +180,98 @@
   [data-accent="green"] {
     --primary: 142 72% 50%;
     --primary-foreground: 0 0% 2%;
+    --accent: 142 72% 50%;
+    --accent-foreground: 0 0% 2%;
     --ring: 142 72% 50%;
     --sidebar-primary: 142 72% 50%;
     --sidebar-primary-foreground: 0 0% 2%;
     --sidebar-ring: 142 72% 50%;
     --neon-green: 142 72% 50%;
+    --neon-cyan: 142 72% 58%;
   }
 
   [data-accent="cyan"] {
     --primary: 187 85% 50%;
     --primary-foreground: 0 0% 4%;
+    --accent: 187 85% 50%;
+    --accent-foreground: 0 0% 4%;
     --ring: 187 85% 50%;
     --sidebar-primary: 187 85% 50%;
     --sidebar-primary-foreground: 0 0% 4%;
     --sidebar-ring: 187 85% 50%;
     --neon-green: 187 85% 53%;
+    --neon-cyan: 187 85% 60%;
   }
 
   [data-accent="violet"] {
     --primary: 270 60% 58%;
     --primary-foreground: 0 0% 98%;
+    --accent: 270 60% 58%;
+    --accent-foreground: 0 0% 98%;
     --ring: 270 60% 58%;
     --sidebar-primary: 270 60% 58%;
     --sidebar-primary-foreground: 0 0% 98%;
     --sidebar-ring: 270 60% 58%;
     --neon-green: 270 60% 60%;
+    --neon-cyan: 270 60% 68%;
   }
 
   [data-accent="amber"] {
     --primary: 38 92% 50%;
     --primary-foreground: 0 0% 2%;
+    --accent: 38 92% 50%;
+    --accent-foreground: 0 0% 2%;
     --ring: 38 92% 50%;
     --sidebar-primary: 38 92% 50%;
     --sidebar-primary-foreground: 0 0% 2%;
     --sidebar-ring: 38 92% 50%;
     --neon-green: 38 92% 50%;
+    --neon-cyan: 38 92% 58%;
   }
 
   /* Day + accent: slightly darker primaries for contrast on light surfaces */
   [data-ui-theme="day"][data-accent="green"] {
     --primary: 142 72% 40%;
+    --accent: 142 72% 40%;
+    --accent-foreground: 0 0% 100%;
     --ring: 142 72% 40%;
     --sidebar-primary: 142 72% 40%;
     --sidebar-ring: 142 72% 40%;
     --neon-green: 142 72% 40%;
+    --neon-cyan: 142 72% 48%;
   }
 
   [data-ui-theme="day"][data-accent="cyan"] {
     --primary: 187 72% 38%;
+    --accent: 187 72% 38%;
+    --accent-foreground: 0 0% 100%;
     --ring: 187 72% 38%;
     --sidebar-primary: 187 72% 38%;
     --sidebar-ring: 187 72% 38%;
     --neon-green: 187 72% 40%;
+    --neon-cyan: 187 72% 48%;
   }
 
   [data-ui-theme="day"][data-accent="violet"] {
     --primary: 270 48% 48%;
+    --accent: 270 48% 48%;
+    --accent-foreground: 0 0% 100%;
     --ring: 270 48% 48%;
     --sidebar-primary: 270 48% 48%;
     --sidebar-ring: 270 48% 48%;
     --neon-green: 270 48% 48%;
+    --neon-cyan: 270 48% 56%;
   }
 
   [data-ui-theme="day"][data-accent="amber"] {
     --primary: 38 88% 44%;
+    --accent: 38 88% 44%;
+    --accent-foreground: 0 0% 100%;
     --ring: 38 88% 44%;
     --sidebar-primary: 38 88% 44%;
     --sidebar-ring: 38 88% 44%;
     --neon-green: 38 88% 44%;
+    --neon-cyan: 38 88% 52%;
   }
 }
 

@@ -385,12 +385,18 @@ export function PlaybackEngine() {
     <>
       <audio
         ref={primaryRef}
-        className="hidden"
+        className="absolute h-0 w-0 opacity-0 pointer-events-none"
         playsInline
         preload="metadata"
         aria-hidden
       />
-      <audio ref={secondaryRef} className="hidden" playsInline preload="auto" aria-hidden />
+      <audio
+        ref={secondaryRef}
+        className="absolute h-0 w-0 opacity-0 pointer-events-none"
+        playsInline
+        preload="auto"
+        aria-hidden
+      />
     </>
   );
 }

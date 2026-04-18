@@ -68,6 +68,35 @@ function cleanupRenderedRow(container: HTMLDivElement, root: Root) {
 }
 
 describe('TrackRow queue playback behavior', () => {
+  test('single click starts playback for a queued row', () => {
+    const queue = [mockTracks[0], mockTracks[1]];
+
+    usePlayerStore.setState({
+      currentTrack: queue[0],
+      isPlaying: false,
+      progress: 0,
+      queue,
+      queueIndex: 0,
+      currentTrackStartedAtMs: null,
+    });
+
+    const { container, root } = renderTrackRow(<TrackRow track={queue[1]} index={1} queuePosition={1} />);
+    const row = container.querySelector('[data-testid="track-row"]');
+    expect(row).not.toBeNull();
+
+    act(() => {
+      row?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    });
+
+    const next = usePlayerStore.getState();
+    expect(next.isPlaying).toBe(true);
+    expect(next.progress).toBe(0);
+    expect(next.queueIndex).toBe(1);
+    expect(next.currentTrack).toBe(queue[1]);
+
+    cleanupRenderedRow(container, root);
+  });
+
   test('double click restarts an ended active queue row', () => {
     const queue = [mockTracks[0], mockTracks[1]];
 

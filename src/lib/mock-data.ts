@@ -39,6 +39,9 @@ const albumNames = [
   'Chromatic', 'Stellar', 'Synthesis', 'Continuum',
 ];
 
+// Demo audio source used when local files/integrations are not connected yet.
+const DEMO_AUDIO_URL = 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3';
+
 /** Spread mock “added” dates for Recently added (relative to when the bundle loads). */
 function daysAgoIso(daysAgo: number): string {
   const d = new Date();
@@ -64,6 +67,7 @@ export const mockTracks: Track[] = trackNames.map((title, i) => ({
   genre: mockArtists[i % mockArtists.length].genres[0],
   year: 2020 + (i % 6),
   trackNumber: (i % 12) + 1,
+  mediaUrl: DEMO_AUDIO_URL,
 }));
 
 export const mockAlbums: Album[] = albumNames.map((title, i) => ({
@@ -94,6 +98,7 @@ export const mockStationBreak: Track = {
   genre: 'Station',
   year: 2026,
   trackNumber: 0,
+  mediaUrl: DEMO_AUDIO_URL,
 };
 
 /** Short mock spots for scheduled ad rotation (no audio unless `mediaUrl` is set). */
@@ -111,6 +116,7 @@ export const mockSpotAds: Track[] = [
     genre: 'Spot',
     year: 2026,
     trackNumber: 1,
+    mediaUrl: DEMO_AUDIO_URL,
   },
   {
     id: 'spot-ad-2',
@@ -125,6 +131,7 @@ export const mockSpotAds: Track[] = [
     genre: 'Spot',
     year: 2026,
     trackNumber: 2,
+    mediaUrl: DEMO_AUDIO_URL,
   },
   {
     id: 'spot-ad-3',
@@ -139,6 +146,7 @@ export const mockSpotAds: Track[] = [
     genre: 'Spot',
     year: 2026,
     trackNumber: 3,
+    mediaUrl: DEMO_AUDIO_URL,
   },
 ];
 

@@ -1,4 +1,22 @@
 {
+  "apphosting": [
+    {
+      "backendId": "urban-radio-web",
+      "rootDir": ".",
+      "ignore": [
+        "node_modules",
+        ".git",
+        ".next",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "playwright-report",
+        "test-results",
+        "coverage",
+        "*.local",
+        "e2e"
+      ]
+    }
+  ],
   "firestore": {
     "rules": "firestore.rules",
     "indexes": "firestore.indexes.json"
